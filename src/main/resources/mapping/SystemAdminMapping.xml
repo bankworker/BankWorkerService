@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.SystemAdminMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.SystemAdminEntity" >
+    <id column="admin_id" property="adminID" jdbcType="INTEGER" />
+    <result column="admin_name" property="adminName" jdbcType="VARCHAR" />
+    <result column="admin_photo" property="adminPhoto" jdbcType="VARCHAR" />
+    <result column="admin_cellphone" property="adminCellphone" jdbcType="VARCHAR" />
+    <result column="admin_password" property="adminPassword" jdbcType="VARCHAR" />
+    <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
+    <result column="data_status_text" property="dataStatusText" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="searchTotalCount" parameterType="string" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1) AS TotalCount
+    FROM bank_worker_base.system_admin
+    WHERE 1=1
+    <if test="dataStatus != null">
+      AND data_status = #{dataStatus,jdbcType=VARCHAR}
+    </if>;
+  </select>
+  <select id="searchList" resultMap="BaseResultMap">
+    SELECT
+      admin_id,
+      admin_name,
+      admin_photo,
+      admin_cellphone,
+      data_status,
+      CASE WHEN data_status = 'N' THEN '正常'
+        WHEN data_status = 'F' THEN '冻结'
+        WHEN data_status = 'D' THEN '删除'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      create_user,
+      DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      update_user,
+      DATE_FORMAT(update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.system_admin
+    WHERE 1=1
+    <if test="arg2 != null">
+      AND data_status = #{arg2,jdbcType=VARCHAR}
+    </if>
+    ORDER BY update_time DESC
+    LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
+  </select>
+  <select id="searchByID" resultMap="BaseResultMap">
+    SELECT
+      admin_id,
+      admin_name,
+      admin_photo,
+      admin_cellphone,
+      data_status,
+      CASE WHEN data_status = 'N' THEN '正常'
+        WHEN data_status = 'F' THEN '冻结'
+        WHEN data_status = 'D' THEN '删除'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      create_user,
+      DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      update_user,
+      DATE_FORMAT(update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.system_admin
+    WHERE admin_id = #{arg0,jdbcType=INTEGER}
+    AND data_status = #{arg1,jdbcType=VARCHAR};
+  </select>
+  <select id="login" resultMap="BaseResultMap">
+    SELECT
+      admin_id,
+      admin_name,
+      admin_photo,
+      admin_cellphone,
+      data_status,
+      CASE WHEN data_status = 'N' THEN '正常'
+        WHEN data_status = 'F' THEN '冻结'
+        WHEN data_status = 'D' THEN '删除'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      create_user,
+      DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      update_user,
+      DATE_FORMAT(update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.system_admin
+    WHERE admin_cellphone = #{arg0,jdbcType=VARCHAR}
+    AND admin_password = #{arg1,jdbcType=VARCHAR};
+  </select>
+  <select id="existCheck" resultType="java.lang.Integer">
+    SELECT
+      COUNT(1) AS TotalCount
+    FROM bank_worker_base.system_admin
+    WHERE admin_cellphone = #{arg0,jdbcType=VARCHAR};
+  </select>
+  <insert id="insert" parameterType="com.johnny.bankworker.entity.SystemAdminEntity" >
+    INSERT INTO bank_worker_base.system_admin (
+      admin_name,
+      admin_photo,
+      admin_cellphone,
+      admin_password,
+      data_status,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{adminName, jdbcType=VARCHAR},
+      #{adminPhoto, jdbcType=VARCHAR},
+      #{adminCellphone, jdbcType=VARCHAR},
+      #{adminPassword, jdbcType=VARCHAR},
+      #{dataStatus, jdbcType=VARCHAR},
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+  <update id="update" parameterType="com.johnny.bankworker.entity.SystemAdminEntity" >
+    UPDATE bank_worker_base.system_admin SET
+      admin_name = #{adminName,jdbcType=VARCHAR},
+      admin_photo = #{adminPhoto,jdbcType=VARCHAR},
+      admin_cellphone = #{adminCellphone,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE admin_id = #{adminID,jdbcType=INTEGER}
+  </update>
+  <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.SystemAdminEntity" >
+    UPDATE bank_worker_base.system_admin SET
+      data_status = #{dataStatus,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE admin_id = #{adminID,jdbcType=INTEGER}
+  </update>
+  <update id="updatePassword" parameterType="com.johnny.bankworker.entity.SystemAdminEntity" >
+    UPDATE bank_worker_base.system_admin SET
+      admin_password = #{adminPassword,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE admin_id = #{adminID,jdbcType=INTEGER}
+  </update>
+  <delete id="delete" parameterType="com.johnny.bankworker.entity.SystemAdminEntity" >
+    DELETE FROM bank_worker_base.bank SET
+    WHERE bank_id = #{bankID,jdbcType=INTEGER}
+  </delete>
+</mapper>

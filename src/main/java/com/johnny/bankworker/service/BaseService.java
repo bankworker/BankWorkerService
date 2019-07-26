@@ -16,8 +16,4 @@ public interface BaseService<T, V, E> {
     UnifiedResponse changeDataStatus(T dto);
 
     UnifiedResponse delete(T dto);
-
-    V convertEntityToVo(E entity);
-
-    E convertDtoToEntity(T dto);
 }

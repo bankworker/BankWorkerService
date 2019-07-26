@@ -24,47 +24,51 @@
   </select>
   <select id="searchList" resultMap="BaseResultMap">
     SELECT
-      bank_id,
-      bank_code,
-      bank_name,
-      bank_logo,
-      data_status,
-      CASE WHEN data_status = 'N' THEN '正常'
-        WHEN data_status = 'F' THEN '冻结'
-        WHEN data_status = 'D' THEN '删除'
+      A.bank_id,
+      A.bank_code,
+      A.bank_name,
+      A.bank_logo,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+        WHEN A.data_status = 'F' THEN '冻结'
+        WHEN A.data_status = 'D' THEN '删除'
         ELSE '未知数据状态'
       END AS data_status_text,
-      create_user,
-      DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
-      update_user,
-      DATE_FORMAT(update_time, '%Y-%m-%d %H:%i:%s') AS update_time
-    FROM bank_worker_base.bank
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
     WHERE 1=1
     <if test="arg2 != null">
-      AND data_status = #{arg2,jdbcType=VARCHAR}
+      AND A.data_status = #{arg2,jdbcType=VARCHAR}
     </if>
-    ORDER BY update_time DESC
+    ORDER BY A.update_time DESC
     LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
   </select>
   <select id="searchByID" resultMap="BaseResultMap">
     SELECT
-      bank_id,
-      bank_code,
-      bank_name,
-      bank_logo,
-      data_status,
-      CASE WHEN data_status = 'N' THEN '正常'
-        WHEN data_status = 'F' THEN '冻结'
-        WHEN data_status = 'D' THEN '删除'
+      A.bank_id,
+      A.bank_code,
+      A.bank_name,
+      A.bank_logo,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+        WHEN A.data_status = 'F' THEN '冻结'
+        WHEN A.data_status = 'D' THEN '删除'
         ELSE '未知数据状态'
       END AS data_status_text,
-      create_user,
-      DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
-      update_user,
-      DATE_FORMAT(update_time, '%Y-%m-%d %H:%i:%s') AS update_time
-    FROM bank_worker_base.bank
-    WHERE bank_id = #{arg0,jdbcType=INTEGER}
-    AND data_status = #{arg1,jdbcType=VARCHAR};
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    WHERE A.bank_id = #{arg0,jdbcType=INTEGER}
+    AND A.data_status = #{arg1,jdbcType=VARCHAR};
   </select>
   <select id="existCheck" resultType="java.lang.Integer">
     SELECT
@@ -85,7 +89,7 @@
       #{bankCode, jdbcType=VARCHAR},
       #{bankName, jdbcType=VARCHAR},
       #{bankLogo, jdbcType=VARCHAR},
-      #{dataStatus, jdbcType=VARCHAR},
+      'N',
       #{createUser, jdbcType=VARCHAR},
       #{updateUser, jdbcType=VARCHAR}
     )
