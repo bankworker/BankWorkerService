@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.ChinaMappingMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.ChinaMappingEntity" >
+    <id column="region_id" property="regionID" jdbcType="INTEGER" />
+    <result column="region_code" property="regionCode" jdbcType="INTEGER" />
+    <result column="region_name" property="regionName" jdbcType="VARCHAR" />
+    <result column="region_parent" property="regionParent" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="searchTotalCount" parameterType="string" resultType="java.lang.Integer">
+
+  </select>
+  <select id="searchList" resultMap="BaseResultMap">
+
+  </select>
+  <select id="searchByParentCode" resultMap="BaseResultMap">
+    SELECT
+      region_id,
+      region_code,
+      region_name,
+      region_parent,
+      create_user,
+      DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      update_user,
+      DATE_FORMAT(update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.china_mapping
+    WHERE region_parent = #{arg0,jdbcType=INTEGER}
+    AND region_code != 0;
+  </select>
+
+  <select id="searchByID" resultMap="BaseResultMap">
+
+  </select>
+  <select id="existCheck" resultType="java.lang.Integer">
+
+  </select>
+  <insert id="insert" parameterType="com.johnny.bankworker.entity.ChinaMappingEntity" >
+
+  </insert>
+  <update id="update" parameterType="com.johnny.bankworker.entity.ChinaMappingEntity" >
+
+  </update>
+  <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.ChinaMappingEntity" >
+
+  </update>
+  <delete id="delete" parameterType="com.johnny.bankworker.entity.ChinaMappingEntity" >
+
+  </delete>
+</mapper>

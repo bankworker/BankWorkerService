@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.BankBranchMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.BankBranchEntity" >
+    <id column="branch_id" property="branchID" jdbcType="INTEGER" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="branch_code" property="branchCode" jdbcType="VARCHAR" />
+    <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
+    <result column="province_code" property="provinceCode" jdbcType="INTEGER" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="city_code" property="cityCode" jdbcType="INTEGER" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="district_code" property="districtCode" jdbcType="INTEGER" />
+    <result column="district_name" property="districtName" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="branch_logo" property="branchLogo" jdbcType="VARCHAR" />
+    <result column="branch_contact" property="branchContact" jdbcType="VARCHAR" />
+    <result column="branch_contact_cellphone" property="branchContactCellphone" jdbcType="VARCHAR" />
+    <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
+    <result column="data_status_text" property="dataStatusText" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="searchTotalCount" parameterType="string" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1) AS TotalCount
+    FROM bank_worker_base.bank_branch
+    WHERE 1=1
+    <if test="dataStatus != null">
+      AND data_status = #{dataStatus,jdbcType=VARCHAR}
+    </if>;
+  </select>
+  <select id="searchList" resultMap="BaseResultMap">
+    SELECT
+      A.branch_id,
+      A.bank_code,
+      C.bank_name,
+      A.branch_name,
+      A.branch_code,
+      A.province_code,
+      D.region_name AS province_name,
+      A.city_code,
+      E.region_name AS city_name,
+      A.district_code,
+      F.region_name AS district_name,
+      A.address,
+      A.branch_logo,
+      A.branch_contact,
+      A.branch_contact_cellphone,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+        WHEN A.data_status = 'F' THEN '冻结'
+        WHEN A.data_status = 'D' THEN '删除'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank_branch A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.bank C
+    ON A.bank_code = C.bank_code
+    LEFT JOIN bank_worker_base.china_mapping D
+    ON A.province_code = D.region_code
+    LEFT JOIN bank_worker_base.china_mapping E
+    ON A.city_code = E.region_code
+    LEFT JOIN bank_worker_base.china_mapping F
+    ON A.district_code = F.region_code
+    WHERE 1=1
+    <if test="arg2 != null">
+      AND A.data_status = #{arg2,jdbcType=VARCHAR}
+    </if>
+    ORDER BY A.update_time DESC
+    LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
+  </select>
+  <select id="searchByID" resultMap="BaseResultMap">
+    SELECT
+      A.branch_id,
+      A.bank_code,
+      C.bank_name,
+      A.branch_name,
+      A.branch_code,
+      A.province_code,
+      D.region_name AS province_name,
+      A.city_code,
+      E.region_name AS city_name,
+      A.district_code,
+      F.region_name AS district_name,
+      A.address,
+      A.branch_logo,
+      A.branch_contact,
+      A.branch_contact_cellphone,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+        WHEN A.data_status = 'F' THEN '冻结'
+        WHEN A.data_status = 'D' THEN '删除'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank_branch A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.bank C
+    ON A.bank_code = C.bank_code
+    LEFT JOIN bank_worker_base.china_mapping D
+    ON A.province_code = D.region_code
+    LEFT JOIN bank_worker_base.china_mapping E
+    ON A.city_code = E.region_code
+    LEFT JOIN bank_worker_base.china_mapping F
+    ON A.district_code = F.region_code
+    WHERE A.branch_id = #{arg0,jdbcType=INTEGER}
+    AND A.data_status = #{arg1,jdbcType=VARCHAR};
+  </select>
+  <select id="existCheck" resultType="java.lang.Integer">
+    SELECT
+      COUNT(1) AS TotalCount
+    FROM bank_worker_base.bank_branch
+    WHERE branch_code = #{arg0,jdbcType=VARCHAR};
+  </select>
+  <insert id="insert" parameterType="com.johnny.bankworker.entity.BankBranchEntity" >
+    INSERT INTO bank_worker_base.bank_branch (
+      bank_code,
+      branch_name,
+      branch_code,
+      province_code,
+      city_code,
+      district_code,
+      address,
+      branch_logo,
+      branch_contact,
+      branch_contact_cellphone,
+      data_status,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{bankCode, jdbcType=VARCHAR},
+      #{branchName, jdbcType=VARCHAR},
+      #{branchCode, jdbcType=VARCHAR},
+      #{provinceCode, jdbcType=INTEGER},
+      #{cityCode, jdbcType=INTEGER},
+      #{districtCode, jdbcType=INTEGER},
+      #{address, jdbcType=VARCHAR},
+      #{branchLogo, jdbcType=VARCHAR},
+      #{branchContact, jdbcType=VARCHAR},
+      #{branchContactCellphone, jdbcType=VARCHAR},
+      'N',
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+  <update id="update" parameterType="com.johnny.bankworker.entity.BankBranchEntity" >
+    UPDATE bank_worker_base.bank_branch SET
+      bank_code = #{bankCode,jdbcType=VARCHAR},
+      branch_name = #{branchName,jdbcType=VARCHAR},
+      branch_code = #{branchCode,jdbcType=VARCHAR},
+      province_code = #{provinceCode,jdbcType=INTEGER},
+      city_code = #{cityCode,jdbcType=INTEGER},
+      district_code = #{districtCode,jdbcType=INTEGER},
+      address = #{address,jdbcType=VARCHAR},
+      branch_logo = #{branchLogo,jdbcType=VARCHAR},
+      branch_contact = #{branchContact,jdbcType=VARCHAR},
+      branch_contact_cellphone = #{branchContactCellphone,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE branch_id = #{branchID,jdbcType=INTEGER}
+  </update>
+  <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.BankBranchEntity" >
+    UPDATE bank_worker_base.bank_branch SET
+      data_status = #{dataStatus,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE branch_id = #{branchID,jdbcType=INTEGER}
+  </update>
+  <delete id="delete" parameterType="com.johnny.bankworker.entity.BankBranchEntity" >
+    DELETE FROM bank_worker_base.bank_branch SET
+    WHERE branch_id = #{branchID,jdbcType=INTEGER}
+  </delete>
+</mapper>

@@ -1,9 +1,9 @@
-package com.johnny.bankworker.entity;
+package com.johnny.bankworker.vo;
 
 import lombok.Data;
 
 @Data
-public class BankBranchEntity extends BaseEntity {
+public class BankBranchVO extends BaseVO{
     private int branchID;
     private String bankCode;
     private String bankName;
