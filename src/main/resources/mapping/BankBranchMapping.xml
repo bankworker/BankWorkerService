@@ -119,6 +119,98 @@
     WHERE A.branch_id = #{arg0,jdbcType=INTEGER}
     AND A.data_status = #{arg1,jdbcType=VARCHAR};
   </select>
+
+  <select id="searchListByBankCode" resultMap="BaseResultMap">
+    SELECT
+      A.branch_id,
+      A.bank_code,
+      C.bank_name,
+      A.branch_name,
+      A.branch_code,
+      A.province_code,
+      D.region_name AS province_name,
+      A.city_code,
+      E.region_name AS city_name,
+      A.district_code,
+      F.region_name AS district_name,
+      A.address,
+      A.branch_logo,
+      A.branch_contact,
+      A.branch_contact_cellphone,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+        WHEN A.data_status = 'F' THEN '冻结'
+        WHEN A.data_status = 'D' THEN '删除'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank_branch A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.bank C
+    ON A.bank_code = C.bank_code
+    LEFT JOIN bank_worker_base.china_mapping D
+    ON A.province_code = D.region_code
+    LEFT JOIN bank_worker_base.china_mapping E
+    ON A.city_code = E.region_code
+    LEFT JOIN bank_worker_base.china_mapping F
+    ON A.district_code = F.region_code
+    LEFT JOIN bank_worker_base.bank G
+    ON A.bank_code = G.bank_code
+    WHERE G.bank_code = #{arg0,jdbcType=INTEGER}
+    AND A.data_status = 'N'
+    AND G.data_status = 'N';
+  </select>
+
+  <select id="searchListByCode" resultMap="BaseResultMap">
+    SELECT
+      A.branch_id,
+      A.bank_code,
+      C.bank_name,
+      A.branch_name,
+      A.branch_code,
+      A.province_code,
+      D.region_name AS province_name,
+      A.city_code,
+      E.region_name AS city_name,
+      A.district_code,
+      F.region_name AS district_name,
+      A.address,
+      A.branch_logo,
+      A.branch_contact,
+      A.branch_contact_cellphone,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+        WHEN A.data_status = 'F' THEN '冻结'
+        WHEN A.data_status = 'D' THEN '删除'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank_branch A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.bank C
+    ON A.bank_code = C.bank_code
+    LEFT JOIN bank_worker_base.china_mapping D
+    ON A.province_code = D.region_code
+    LEFT JOIN bank_worker_base.china_mapping E
+    ON A.city_code = E.region_code
+    LEFT JOIN bank_worker_base.china_mapping F
+    ON A.district_code = F.region_code
+    LEFT JOIN bank_worker_base.bank G
+    ON A.bank_code = G.bank_code
+    WHERE G.bank_code = #{arg0,jdbcType=INTEGER}
+    AND A.branch_code = #{arg1,jdbcType=INTEGER}
+    AND A.data_status = 'N'
+    AND G.data_status = 'N';
+  </select>
+
   <select id="existCheck" resultType="java.lang.Integer">
     SELECT
       COUNT(1) AS TotalCount

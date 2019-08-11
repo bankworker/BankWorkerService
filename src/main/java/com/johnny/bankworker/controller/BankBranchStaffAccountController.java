@@ -1,30 +1,20 @@
 package com.johnny.bankworker.controller;
 
-import com.johnny.bankworker.dto.BankBranchDTO;
-import com.johnny.bankworker.service.impl.BankBranchServiceImpl;
+import com.johnny.bankworker.dto.BankBranchStaffAccount4OriginalDTO;
+import com.johnny.bankworker.service.impl.BankBranchStaffAccountServiceImpl;
 import com.johnny.bankworker.vo.UnifiedResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/bank/branch")
-public class BankBranchController {
+@RequestMapping("/api/system/account")
+public class BankBranchStaffAccountController {
     @Autowired
-    private BankBranchServiceImpl serviceImpl;
+    private BankBranchStaffAccountServiceImpl serviceImpl;
 
     @RequestMapping(value = "/{pageNumber}/{pageSize}/{dataStatus}", method = RequestMethod.GET)
     public UnifiedResponse findList(@PathVariable("pageNumber") int pageNumber, @PathVariable("pageSize") int pageSize, @PathVariable("dataStatus") String dataStatus){
         return serviceImpl.findList(pageNumber, pageSize, dataStatus);
-    }
-
-    @RequestMapping(value = "/{bankCode}", method = RequestMethod.GET)
-    public UnifiedResponse findByBankCode(@PathVariable("bankCode") String bankCode){
-        return serviceImpl.findListByBankCode(bankCode);
-    }
-
-    @RequestMapping(value = "/code/{bankCode}/{branchCode}", method = RequestMethod.GET)
-    public UnifiedResponse findByCode(@PathVariable("bankCode") String bankCode, @PathVariable("branchCode") String branchCode){
-        return serviceImpl.findListByCode(bankCode, branchCode);
     }
 
     @RequestMapping(value = "/{id}/{dataStatus}", method = RequestMethod.GET)
@@ -38,22 +28,22 @@ public class BankBranchController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public UnifiedResponse add(@RequestBody BankBranchDTO dto){
+    public UnifiedResponse add(@RequestBody BankBranchStaffAccount4OriginalDTO dto){
         return serviceImpl.add(dto);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public UnifiedResponse change(@RequestBody BankBranchDTO dto){
+    public UnifiedResponse change(@RequestBody BankBranchStaffAccount4OriginalDTO dto){
         return serviceImpl.change(dto);
     }
 
     @RequestMapping(value="/changeStatus", method = RequestMethod.PUT)
-    public UnifiedResponse changeStatus(@RequestBody BankBranchDTO dto){
+    public UnifiedResponse changeStatus(@RequestBody BankBranchStaffAccount4OriginalDTO dto){
         return serviceImpl.changeDataStatus(dto);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public UnifiedResponse delete(@RequestBody BankBranchDTO dto){
+    public UnifiedResponse delete(@RequestBody BankBranchStaffAccount4OriginalDTO dto){
         return serviceImpl.delete(dto);
     }
 }
