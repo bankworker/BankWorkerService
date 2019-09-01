@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.OrderDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.OrderDetailEntity" >
+    <id column="order_detail_id" property="orderDetailID" jdbcType="INTEGER" />
+    <result column="order_id" property="orderID" jdbcType="INTEGER" />
+    <result column="system_id" property="systemID" jdbcType="INTEGER" />
+
+    <result column="system_name" property="systemName" jdbcType="VARCHAR" />
+    <result column="system_price" property="systemPrice" jdbcType="DECIMAL" />
+
+
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="searchTotalCount" parameterType="string" resultType="java.lang.Integer">
+
+  </select>
+  <select id="searchList" resultMap="BaseResultMap">
+
+  </select>
+  <select id="searchListByOrderID" resultMap="BaseResultMap">
+    SELECT
+      A.order_detail_id,
+      A.order_id,
+      A.system_id,
+      C.system_name,
+      C.system_price,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_biz.bank_order_detail A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.system_setting C
+    ON A.system_id = C.system_id
+    WHERE A.order_id = #{arg0,jdbcType=INTEGER}
+    ORDER BY A.update_time DESC;
+  </select>
+  <select id="searchByID" resultMap="BaseResultMap">
+
+  </select>
+  <select id="existCheck" resultType="java.lang.Integer">
+
+  </select>
+  <insert id="insert" parameterType="com.johnny.bankworker.entity.OrderEntity" >
+    INSERT INTO bank_worker_biz.bank_order_detail (
+      order_id,
+      system_id,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{orderID, jdbcType=INTEGER},
+      #{systemID, jdbcType=INTEGER},
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+  <update id="update" parameterType="com.johnny.bankworker.entity.OrderEntity" >
+
+  </update>
+  <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.OrderEntity" >
+
+  </update>
+  <delete id="delete" parameterType="com.johnny.bankworker.entity.OrderEntity" >
+    DELETE FROM bank_worker_biz.bank_order_detail SET
+    WHERE order_detail_id = #{orderDetailID,jdbcType=INTEGER}
+  </delete>
+</mapper>

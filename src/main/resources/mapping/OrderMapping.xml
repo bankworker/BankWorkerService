@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.OrderEntity" >
+    <id column="order_id" property="orderID" jdbcType="INTEGER" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="branch_code" property="branchCode" jdbcType="VARCHAR" />
+    <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
+    <result column="order_date" property="orderDate" jdbcType="VARCHAR" />
+    <result column="order_type" property="orderType" jdbcType="VARCHAR" />
+    <result column="order_type_text" property="orderTypeText" jdbcType="VARCHAR" />
+    <result column="order_original_amount" property="originalAmount" jdbcType="DECIMAL" />
+    <result column="order_discount" property="discount" jdbcType="VARCHAR" />
+    <result column="order_amount" property="orderAmount" jdbcType="DECIMAL" />
+    <result column="service_due_date" property="serviceDueDate" jdbcType="VARCHAR" />
+    <result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+    <result column="order_status_text" property="orderStatusText" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="searchTotalCount" parameterType="string" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1) AS TotalCount
+    FROM bank_worker_biz.bank_order
+    WHERE 1=1
+    <if test="dataStatus != null">
+      AND data_status = #{dataStatus,jdbcType=VARCHAR}
+    </if>;
+  </select>
+  <select id="searchList" resultMap="BaseResultMap">
+    SELECT
+      A.order_id,
+      A.bank_code,
+      C.bank_name,
+      A.branch_code,
+      D.branch_name,
+      DATE_FORMAT(A.order_date, '%Y-%m-%d %H:%i:%s') AS order_date,
+      A.order_type,
+      CASE WHEN A.order_type = 'N' THEN '软件系统'
+      WHEN A.order_type = 'S' THEN '软件系统 + 服务器托管'
+      ELSE '未知数据状态'
+      END AS order_type_text,
+      A.order_original_amount,
+      A.order_discount,
+      A.order_amount,
+      DATE_FORMAT(A.service_due_date, '%Y-%m-%d %H:%i:%s') AS service_due_date,
+      A.order_status,
+      CASE WHEN A.order_status = 'W' THEN '等待付款'
+        WHEN A.order_status = 'P' THEN '已支付'
+        WHEN A.order_status = 'C' THEN '已取消'
+        WHEN A.order_status = 'E' THEN '已过期'
+        ELSE '未知数据状态'
+      END AS order_status_text,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_biz.bank_order A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.bank C
+    ON A.bank_code = C.bank_code
+    LEFT JOIN bank_worker_base.bank_branch D
+    ON A.branch_code = D.branch_code
+    WHERE 1=1
+    <if test="arg2 != null">
+      AND A.order_status = #{arg2,jdbcType=VARCHAR}
+    </if>
+    ORDER BY A.update_time DESC
+    LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
+  </select>
+  <select id="searchByID" resultMap="BaseResultMap">
+    SELECT
+      A.order_id,
+      A.bank_code,
+      C.bank_name,
+      A.branch_code,
+      D.branch_name,
+      DATE_FORMAT(A.order_date, '%Y-%m-%d %H:%i:%s') AS order_date,
+      A.order_type,
+      CASE WHEN A.order_type = 'N' THEN '软件系统'
+        WHEN A.order_type = 'S' THEN '软件系统 + 服务器托管'
+        ELSE '未知数据状态'
+      END AS order_type_text,
+      A.order_original_amount,
+      A.order_discount,
+      A.order_amount,
+      DATE_FORMAT(A.service_due_date, '%Y-%m-%d %H:%i:%s') AS service_due_date,
+      A.order_status,
+      CASE WHEN A.order_status = 'W' THEN '等待付款'
+        WHEN A.order_status = 'P' THEN '已支付'
+        WHEN A.order_status = 'C' THEN '已取消'
+        WHEN A.order_status = 'E' THEN '已过期'
+        ELSE '未知数据状态'
+      END AS order_status_text,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_biz.bank_order A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.bank C
+    ON A.bank_code = C.bank_code
+    LEFT JOIN bank_worker_base.bank_branch D
+    ON A.branch_code = D.branch_code
+    WHERE A.order_id = #{arg0,jdbcType=INTEGER}
+    AND A.order_status = #{arg1,jdbcType=VARCHAR};
+  </select>
+  <select id="existCheck" resultType="java.lang.Integer">
+
+  </select>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="orderID" parameterType="com.johnny.bankworker.entity.OrderEntity" >
+    INSERT INTO bank_worker_biz.bank_order (
+      bank_code,
+      branch_code,
+      order_date,
+      order_type,
+      order_original_amount,
+      order_discount,
+      order_amount,
+      service_due_date,
+      order_status,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{bankCode, jdbcType=VARCHAR},
+      #{branchCode, jdbcType=VARCHAR},
+      #{orderDate, jdbcType=VARCHAR},
+      #{orderType, jdbcType=VARCHAR},
+      #{originalAmount, jdbcType=DECIMAL},
+      #{discount, jdbcType=VARCHAR},
+      #{orderAmount, jdbcType=DECIMAL},
+      #{serviceDueDate, jdbcType=VARCHAR},
+      'W',
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+  <update id="update" parameterType="com.johnny.bankworker.entity.OrderEntity" >
+    UPDATE bank_worker_biz.bank_order SET
+      order_type = #{orderType,jdbcType=VARCHAR},
+      order_original_amount = #{originalAmount,jdbcType=DECIMAL},
+      order_discount = #{discount,jdbcType=VARCHAR},
+      order_amount = #{orderAmount,jdbcType=DECIMAL},
+      service_due_date = #{serviceDueDate,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE order_id = #{orderID,jdbcType=INTEGER}
+  </update>
+  <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.OrderEntity" >
+    UPDATE bank_worker_biz.bank_order SET
+      order_status = #{orderStatus,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE order_id = #{orderID,jdbcType=INTEGER}
+  </update>
+  <delete id="delete" parameterType="com.johnny.bankworker.entity.OrderEntity" >
+    DELETE FROM bank_worker_biz.bank_order SET
+    WHERE order_id = #{orderID,jdbcType=INTEGER}
+  </delete>
+</mapper>
