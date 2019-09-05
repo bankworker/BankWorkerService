@@ -8,6 +8,7 @@ import com.johnny.bankworker.dto.BankBranchStaffAccountDTO;
 import com.johnny.bankworker.entity.BankBranchStaffAccountEntity;
 import com.johnny.bankworker.manager.UnifiedResponseManager;
 import com.johnny.bankworker.mapper.BankBranchStaffAccountMapper;
+import com.johnny.bankworker.service.BankBranchStaffAccountService;
 import com.johnny.bankworker.service.BaseService;
 import com.johnny.bankworker.vo.BankBranchStaffAccountVO;
 import com.johnny.bankworker.vo.UnifiedResponse;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class BankBranchStaffAccountServiceImpl implements BaseService<BankBranchStaffAccount4OriginalDTO, BankBranchStaffAccountVO, BankBranchStaffAccountEntity> {
+public class BankBranchStaffAccountServiceImpl implements BankBranchStaffAccountService {
 
     @Autowired
     private BankBranchStaffAccountMapper myMapper;
@@ -65,6 +66,51 @@ public class BankBranchStaffAccountServiceImpl implements BaseService<BankBranch
     }
 
     @Override
+    public UnifiedResponse findAuthorizedSystem(int accountID) {
+        try {
+            List<BankBranchStaffAccountVO> modelList = new ArrayList<>();
+            BankBranchStaffAccountEntity accountEntity =  myMapper.searchByID(accountID, DataStatusConstant.Normal);
+            if(accountEntity == null){
+                return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.NO_SEARCH_COUNT, ResponseDataConstant.NO_DATA);
+            }
+
+            List<BankBranchStaffAccountEntity> authorizedSystemEntityList = myMapper.searchAuthorizedSystem(accountEntity.getAccount(),accountEntity.getPassword());
+            if(authorizedSystemEntityList.isEmpty()){
+                return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.NO_SEARCH_COUNT, ResponseDataConstant.NO_DATA);
+            }
+
+            for (BankBranchStaffAccountEntity entity : authorizedSystemEntityList) {
+                BankBranchStaffAccountVO model = new BankBranchStaffAccountVO();
+                ObjectConvertUtils.toBean(entity, model);
+                modelList.add(model);
+            }
+            return UnifiedResponseManager.buildSearchSuccessResponse(modelList.size(), modelList);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            return UnifiedResponseManager.buildExceptionResponse();
+        }
+    }
+
+    @Override
+    public UnifiedResponse login(String account, String password, int systemID) {
+        try {
+            BankBranchStaffAccountVO model = new BankBranchStaffAccountVO();
+            BankBranchStaffAccountEntity entity =  myMapper.login(account, password, systemID);
+            if(entity == null){
+                return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.NO_SEARCH_COUNT, ResponseDataConstant.NO_DATA);
+            }
+
+            ObjectConvertUtils.toBean(entity, model);
+            return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.ONE_SEARCH_COUNT, model);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            return UnifiedResponseManager.buildExceptionResponse();
+        }
+    }
+
+
+
+    @Override
     public UnifiedResponse existCheck(String value) {
         return null;
     }
@@ -94,6 +140,8 @@ public class BankBranchStaffAccountServiceImpl implements BaseService<BankBranch
                 entity.setUpdateUser(branchStaffAccountDTO.getLoginUser());
                 affectRow = myMapper.insert(entity);
             }
+
+
             return UnifiedResponseManager.buildSubmitSuccessResponse(affectRow);
         } catch (Exception ex) {
             logger.error(ex.toString());

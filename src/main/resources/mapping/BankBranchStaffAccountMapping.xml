@@ -10,6 +10,7 @@
     <result column="system_id" property="systemID" jdbcType="INTEGER" />
     <result column="system_name" property="systemName" jdbcType="VARCHAR" />
     <result column="staff_account" property="account" jdbcType="VARCHAR" />
+    <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
     <result column="staff_password" property="password" jdbcType="VARCHAR" />
     <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
     <result column="data_status_text" property="dataStatusText" jdbcType="VARCHAR" />
@@ -97,6 +98,82 @@
     WHERE A.account_id = #{arg0,jdbcType=INTEGER}
     AND A.data_status = #{arg1,jdbcType=VARCHAR};
   </select>
+
+  <select id="login" resultMap="BaseResultMap">
+    SELECT
+      A.account_id,
+      A.bank_code,
+      D.bank_name,
+      A.branch_code,
+      E.branch_name,
+      A.system_id,
+      C.system_name,
+      A.staff_account,
+      IFNULL(F.staff_name, '管理员') AS staff_name,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+      WHEN A.data_status = 'F' THEN '冻结'
+      WHEN A.data_status = 'D' THEN '删除'
+      ELSE '未知数据状态'
+      END AS data_status_text,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank_branch_staff_account A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.system_setting C
+    ON A.system_id = C.system_id
+    LEFT JOIN bank_worker_base.bank D
+    ON A.bank_code = D.bank_code
+    LEFT JOIN bank_worker_base.bank_branch E
+    ON A.branch_code = E.branch_code
+    LEFT JOIN bank_worker_base.bank_branch_staff F
+    ON A.staff_account = F.staff_cellphone
+    WHERE A.staff_account = #{arg0,jdbcType=VARCHAR}
+    AND A.staff_password = #{arg1,jdbcType=VARCHAR}
+    AND A.system_id = #{arg2,jdbcType=VARCHAR}
+    AND A.data_status = 'N';
+  </select>
+
+  <select id="searchAuthorizedSystem" resultMap="BaseResultMap">
+    SELECT
+      A.account_id,
+      A.bank_code,
+      D.bank_name,
+      A.branch_code,
+      E.branch_name,
+      A.system_id,
+      C.system_name,
+      A.staff_account,
+      IFNULL(F.staff_name, '管理员') AS staff_name,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+      WHEN A.data_status = 'F' THEN '冻结'
+      WHEN A.data_status = 'D' THEN '删除'
+      ELSE '未知数据状态'
+      END AS data_status_text,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      B.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank_branch_staff_account A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.system_setting C
+    ON A.system_id = C.system_id
+    LEFT JOIN bank_worker_base.bank D
+    ON A.bank_code = D.bank_code
+    LEFT JOIN bank_worker_base.bank_branch E
+    ON A.branch_code = E.branch_code
+    LEFT JOIN bank_worker_base.bank_branch_staff F
+    ON A.staff_account = F.staff_cellphone
+    WHERE A.staff_account = #{arg0,jdbcType=VARCHAR}
+    AND A.staff_password = #{arg1,jdbcType=VARCHAR}
+    AND A.data_status = 'N';
+  </select>
+
   <select id="existCheck" resultType="java.lang.Integer">
 
   </select>

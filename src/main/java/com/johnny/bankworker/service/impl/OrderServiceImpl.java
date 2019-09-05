@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class OrderServiceImpl implements BaseService<OrderDTO, OrderVO, OrderEntity> {
+public class OrderServiceImpl implements BaseService<OrderDTO> {
     @Autowired
     private OrderMapper myMapper;
 

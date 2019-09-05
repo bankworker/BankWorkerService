@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SystemSettingServiceImpl implements BaseService<SystemSettingDTO, SystemSettingVO, SystemSettingEntity> {
+public class SystemSettingServiceImpl implements BaseService<SystemSettingDTO> {
     @Autowired
     private SystemSettingMapper myMapper;
     private Logger logger = LogManager.getLogger(SystemSettingServiceImpl.class);

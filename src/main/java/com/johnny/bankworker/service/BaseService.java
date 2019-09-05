@@ -2,7 +2,7 @@ package com.johnny.bankworker.service;
 
 import com.johnny.bankworker.vo.UnifiedResponse;
 
-public interface BaseService<T, V, E> {
+public interface BaseService<T> {
     UnifiedResponse findList(int pageNumber, int pageSize, String dataStatus);
 
     UnifiedResponse find(int id, String dataStatus);

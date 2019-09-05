@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ServiceSettingServiceImpl implements BaseService<ServiceSettingDTO, ServiceSettingVO, ServiceSettingEntity> {
+public class ServiceSettingServiceImpl implements BaseService<ServiceSettingDTO> {
     @Autowired
     private ServiceSettingMapper myMapper;
     private Logger logger = LogManager.getLogger(ServiceSettingServiceImpl.class);

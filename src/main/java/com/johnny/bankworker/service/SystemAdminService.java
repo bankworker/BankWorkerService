@@ -5,7 +5,7 @@ import com.johnny.bankworker.entity.SystemAdminEntity;
 import com.johnny.bankworker.vo.SystemAdminVO;
 import com.johnny.bankworker.vo.UnifiedResponse;
 
-public interface SystemAdminService extends BaseService<SystemAdminDTO, SystemAdminVO, SystemAdminEntity> {
+public interface SystemAdminService extends BaseService<SystemAdminDTO> {
 
     UnifiedResponse login(String cellphone, String password);
 

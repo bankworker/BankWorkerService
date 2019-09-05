@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class BankServiceImpl implements BaseService<BankDTO, BankVO, BankEntity> {
+public class BankServiceImpl implements BaseService<BankDTO> {
     @Autowired
     private BankMapper myMapper;
     private Logger logger = LogManager.getLogger(BankServiceImpl.class);

@@ -17,9 +17,19 @@ public class BankBranchStaffAccountController {
         return serviceImpl.findList(pageNumber, pageSize, dataStatus);
     }
 
+    @RequestMapping(value = "/authorizedSystem/{accountID}", method = RequestMethod.GET)
+    public UnifiedResponse findAuthorizedSystem(@PathVariable("accountID") int accountID){
+        return serviceImpl.findAuthorizedSystem(accountID);
+    }
+
     @RequestMapping(value = "/{id}/{dataStatus}", method = RequestMethod.GET)
     public UnifiedResponse find(@PathVariable("id") int id, @PathVariable("dataStatus") String dataStatus){
         return serviceImpl.find(id, dataStatus);
+    }
+
+    @RequestMapping(value = "/login/{account}/{password}/{systemID}", method = RequestMethod.GET)
+    public UnifiedResponse login(@PathVariable("account") String account, @PathVariable("password") String password, @PathVariable("systemID") int systemID){
+        return serviceImpl.login(account, password, systemID);
     }
 
     @RequestMapping(value = "/exist/{value}", method = RequestMethod.GET)
