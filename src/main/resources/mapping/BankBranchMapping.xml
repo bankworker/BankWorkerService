@@ -264,6 +264,13 @@
       update_user = #{updateUser,jdbcType=VARCHAR}
     WHERE branch_id = #{branchID,jdbcType=INTEGER}
   </update>
+  <update id="updateLogo" parameterType="com.johnny.bankworker.entity.BankBranchEntity" >
+    UPDATE bank_worker_base.bank_branch SET
+      branch_logo = #{branchLogo,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=INTEGER}
+    AND branch_code = #{branchCode,jdbcType=INTEGER};
+  </update>
   <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.BankBranchEntity" >
     UPDATE bank_worker_base.bank_branch SET
       data_status = #{dataStatus,jdbcType=VARCHAR},

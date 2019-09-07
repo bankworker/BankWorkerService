@@ -9,4 +9,6 @@ public interface BankBranchService extends BaseService<BankBranchDTO> {
     UnifiedResponse findListByBankCode(String bankCode);
 
     UnifiedResponse findListByCode(String bankCode, String branchCode);
+
+    UnifiedResponse changeLogo(BankBranchDTO dto);
 }

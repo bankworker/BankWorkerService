@@ -52,6 +52,11 @@ public class BankBranchController {
         return serviceImpl.changeDataStatus(dto);
     }
 
+    @RequestMapping(value="/changeLogo", method = RequestMethod.PUT)
+    public UnifiedResponse changeLogo(@RequestBody BankBranchDTO dto){
+        return serviceImpl.changeLogo(dto);
+    }
+
     @RequestMapping(method = RequestMethod.DELETE)
     public UnifiedResponse delete(@RequestBody BankBranchDTO dto){
         return serviceImpl.delete(dto);
