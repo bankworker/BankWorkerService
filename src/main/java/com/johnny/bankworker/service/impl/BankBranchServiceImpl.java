@@ -171,12 +171,9 @@ public class BankBranchServiceImpl implements BankBranchService {
     }
 
     @Override
-    public UnifiedResponse delete(BankBranchDTO dto) {
+    public UnifiedResponse delete(int id) {
         try {
-            BankBranchEntity entity = new BankBranchEntity();
-            ObjectConvertUtils.toBean(dto, entity);
-            entity.setUpdateUser(dto.getLoginUser());
-            int affectRow = myMapper.delete(entity);
+            int affectRow = myMapper.delete(id);
             return UnifiedResponseManager.buildSubmitSuccessResponse(affectRow);
         } catch (Exception ex) {
             logger.error(ex.toString());

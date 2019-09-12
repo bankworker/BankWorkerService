@@ -66,8 +66,8 @@
   <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.OrderEntity" >
 
   </update>
-  <delete id="delete" parameterType="com.johnny.bankworker.entity.OrderEntity" >
+  <delete id="delete" parameterType="java.lang.Integer" >
     DELETE FROM bank_worker_biz.bank_order_detail SET
-    WHERE order_detail_id = #{orderDetailID,jdbcType=INTEGER}
+    WHERE order_detail_id = #{id,jdbcType=INTEGER}
   </delete>
 </mapper>

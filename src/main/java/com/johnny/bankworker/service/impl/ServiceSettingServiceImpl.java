@@ -114,12 +114,9 @@ public class ServiceSettingServiceImpl implements BaseService<ServiceSettingDTO>
     }
 
     @Override
-    public UnifiedResponse delete(ServiceSettingDTO dto) {
+    public UnifiedResponse delete(int id) {
         try {
-            ServiceSettingEntity entity = new ServiceSettingEntity();
-            ObjectConvertUtils.toBean(dto, entity);
-            entity.setUpdateUser(dto.getLoginUser());
-            int affectRow = myMapper.delete(entity);
+            int affectRow = myMapper.delete(id);
             return UnifiedResponseManager.buildSubmitSuccessResponse(affectRow);
         } catch (Exception ex) {
             logger.error(ex.toString());

@@ -120,12 +120,9 @@ public class BankServiceImpl implements BaseService<BankDTO> {
     }
 
     @Override
-    public UnifiedResponse delete(BankDTO dto) {
+    public UnifiedResponse delete(int id) {
         try {
-            BankEntity entity = new BankEntity();
-            ObjectConvertUtils.toBean(dto, entity);
-            entity.setUpdateUser(dto.getLoginUser());
-            int affectRow = myMapper.delete(entity);
+            int affectRow = myMapper.delete(id);
             return UnifiedResponseManager.buildSubmitSuccessResponse(affectRow);
         } catch (Exception ex) {
             logger.error(ex.toString());

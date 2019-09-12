@@ -212,8 +212,8 @@
       update_user = #{updateUser,jdbcType=VARCHAR}
     WHERE account_id = #{accountID,jdbcType=INTEGER}
   </update>
-  <delete id="delete" parameterType="com.johnny.bankworker.entity.BankBranchStaffAccountEntity" >
+  <delete id="delete" parameterType="java.lang.Integer" >
     DELETE FROM bank_worker_base.bank_branch_staff_account SET
-    WHERE account_id = #{accountID,jdbcType=INTEGER}
+    WHERE account_id = #{id,jdbcType=INTEGER}
   </delete>
 </mapper>

@@ -99,8 +99,8 @@
       update_user = #{updateUser,jdbcType=VARCHAR}
     WHERE service_id = #{serviceID,jdbcType=INTEGER}
   </update>
-  <delete id="delete" parameterType="com.johnny.bankworker.entity.ServiceSettingEntity" >
+  <delete id="delete" parameterType="java.lang.Integer" >
     DELETE FROM bank_worker_base.service_setting SET
-    WHERE service_id = #{serviceID,jdbcType=INTEGER}
+    WHERE service_id = #{id,jdbcType=INTEGER}
   </delete>
 </mapper>

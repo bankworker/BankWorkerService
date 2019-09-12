@@ -72,7 +72,7 @@ public class SystemAdminServiceImpl implements SystemAdminService {
     }
 
     @Override
-    public UnifiedResponse delete(SystemAdminDTO dto) {
+    public UnifiedResponse delete(int id) {
         return null;
     }
 }

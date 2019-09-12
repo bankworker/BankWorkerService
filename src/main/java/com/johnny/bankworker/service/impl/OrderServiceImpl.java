@@ -122,7 +122,7 @@ public class OrderServiceImpl implements BaseService<OrderDTO> {
     }
 
     @Override
-    public UnifiedResponse delete(OrderDTO dto) {
+    public UnifiedResponse delete(int id) {
         return null;
     }
 }

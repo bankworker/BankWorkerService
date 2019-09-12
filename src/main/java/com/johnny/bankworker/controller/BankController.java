@@ -42,8 +42,8 @@ public class BankController {
         return serviceImpl.changeDataStatus(dto);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    public UnifiedResponse delete(@RequestBody BankDTO dto){
-        return serviceImpl.delete(dto);
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public UnifiedResponse delete(@PathVariable("id") int id){
+        return serviceImpl.delete(id);
     }
 }

@@ -36,9 +36,8 @@ public class SystemSettingController {
         return serviceImpl.changeDataStatus(dto);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    public UnifiedResponse delete(@RequestBody SystemSettingDTO dto){
-        return serviceImpl.delete(dto);
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public UnifiedResponse delete(@PathVariable("id") int id){
+        return serviceImpl.delete(id);
     }
-
 }

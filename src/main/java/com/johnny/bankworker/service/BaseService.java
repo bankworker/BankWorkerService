@@ -15,5 +15,5 @@ public interface BaseService<T> {
 
     UnifiedResponse changeDataStatus(T dto);
 
-    UnifiedResponse delete(T dto);
+    UnifiedResponse delete(int id);
 }

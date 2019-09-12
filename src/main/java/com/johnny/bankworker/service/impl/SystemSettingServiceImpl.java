@@ -114,12 +114,9 @@ public class SystemSettingServiceImpl implements BaseService<SystemSettingDTO> {
     }
 
     @Override
-    public UnifiedResponse delete(SystemSettingDTO dto) {
+    public UnifiedResponse delete(int id) {
         try {
-            SystemSettingEntity entity = new SystemSettingEntity();
-            ObjectConvertUtils.toBean(dto, entity);
-            entity.setUpdateUser(dto.getLoginUser());
-            int affectRow = myMapper.delete(entity);
+            int affectRow = myMapper.delete(id);
             return UnifiedResponseManager.buildSubmitSuccessResponse(affectRow);
         } catch (Exception ex) {
             logger.error(ex.toString());

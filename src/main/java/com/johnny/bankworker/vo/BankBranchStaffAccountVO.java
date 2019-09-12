@@ -1,8 +1,10 @@
 package com.johnny.bankworker.vo;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class BankBranchStaffAccountVO extends BaseVO {
     private Integer accountID;
     private String bankCode;
