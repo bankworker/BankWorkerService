@@ -10,4 +10,8 @@ public interface BankBranchStaffAccountMapper extends BaseMapper<BankBranchStaff
     BankBranchStaffAccountEntity login(String account, String password, int systemID);
 
     List<BankBranchStaffAccountEntity> searchAuthorizedSystem(String account, String password);
+
+    int updateByAccount(BankBranchStaffAccountEntity entity);
+
+    int deleteByAccount(BankBranchStaffAccountEntity entity);
 }

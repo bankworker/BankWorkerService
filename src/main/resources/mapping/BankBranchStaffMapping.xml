@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.BankBranchStaffMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.BankBranchStaffEntity" >
+    <id column="staff_id" property="staffID" jdbcType="INTEGER" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="branch_code" property="branchCode" jdbcType="VARCHAR" />
+    <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
+    <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
+    <result column="staff_cellphone" property="staffCellphone" jdbcType="VARCHAR" />
+    <result column="staff_post_id" property="staffPostID" jdbcType="INTEGER" />
+    <result column="staff_post_name" property="staffPostName" jdbcType="VARCHAR" />
+    <result column="staff_photo_url" property="staffPhotoUrl" jdbcType="VARCHAR" />
+    <result column="staff_resume_url" property="staffResumeUrl" jdbcType="VARCHAR" />
+    <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
+    <result column="data_status_text" property="dataStatusText" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="searchTotalCount" parameterType="string" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1) AS TotalCount
+    FROM bank_worker_base.bank_branch_staff
+    WHERE 1=1
+    <if test="dataStatus != null">
+      AND data_status = #{dataStatus,jdbcType=VARCHAR}
+    </if>;
+  </select>
+  <select id="searchTotalCount4Branch" parameterType="string" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1) AS TotalCount
+    FROM bank_worker_base.bank_branch_staff
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR}
+    AND data_status = 'N';
+  </select>
+
+  <select id="searchList" resultMap="BaseResultMap">
+    SELECT
+      A.staff_id,
+      A.bank_code,
+      D.bank_name,
+      A.branch_code,
+      E.branch_name,
+      A.staff_name,
+      A.staff_cellphone,
+      A.staff_post_id,
+      F.staff_post_name,
+      A.staff_photo_url,
+      A.staff_resume_url,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+        WHEN A.data_status = 'F' THEN '冻结'
+        WHEN A.data_status = 'D' THEN '删除'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank_branch_staff A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    LEFT JOIN bank_worker_base.bank D
+    ON A.bank_code = D.bank_code
+    LEFT JOIN bank_worker_base.bank_branch E
+    ON A.bank_code = E.bank_code
+    ANd A.branch_code = E.branch_code
+    LEFT JOIN bank_worker_base.staff_post_setting F
+    ON A.staff_post_id = F.staff_post_id
+    WHERE 1=1
+    <if test="arg2 != null">
+      AND A.data_status = #{arg2,jdbcType=VARCHAR}
+    </if>
+    ORDER BY A.update_time DESC
+    LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
+  </select>
+  <select id="searchList4Branch" resultMap="BaseResultMap">
+    SELECT
+      A.staff_id,
+      A.bank_code,
+      D.bank_name,
+      A.branch_code,
+      E.branch_name,
+      A.staff_name,
+      A.staff_cellphone,
+      A.staff_post_id,
+      F.staff_post_name,
+      A.staff_photo_url,
+      A.staff_resume_url,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+      WHEN A.data_status = 'F' THEN '冻结'
+      WHEN A.data_status = 'D' THEN '删除'
+      ELSE '未知数据状态'
+      END AS data_status_text,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank_branch_staff A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    LEFT JOIN bank_worker_base.bank D
+    ON A.bank_code = D.bank_code
+    LEFT JOIN bank_worker_base.bank_branch E
+    ON A.bank_code = E.bank_code
+    ANd A.branch_code = E.branch_code
+    LEFT JOIN bank_worker_base.staff_post_setting F
+    ON A.staff_post_id = F.staff_post_id
+    WHERE A.bank_code = #{arg2,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg3,jdbcType=VARCHAR}
+    AND A.data_status = 'N'
+    ORDER BY A.update_time DESC
+    LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
+  </select>
+  <select id="searchByID" resultMap="BaseResultMap">
+    SELECT
+      A.staff_id,
+      A.bank_code,
+      D.bank_name,
+      A.branch_code,
+      E.branch_name,
+      A.staff_name,
+      A.staff_cellphone,
+      A.staff_post_id,
+      F.staff_post_name,
+      A.staff_photo_url,
+      A.staff_resume_url,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+      WHEN A.data_status = 'F' THEN '冻结'
+      WHEN A.data_status = 'D' THEN '删除'
+      ELSE '未知数据状态'
+      END AS data_status_text,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.bank_branch_staff A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    LEFT JOIN bank_worker_base.bank D
+    ON A.bank_code = D.bank_code
+    LEFT JOIN bank_worker_base.bank_branch E
+    ON A.bank_code = E.bank_code
+    ANd A.branch_code = E.branch_code
+    LEFT JOIN bank_worker_base.staff_post_setting F
+    ON A.staff_post_id = F.staff_post_id
+    WHERE A.staff_id = #{arg0,jdbcType=INTEGER}
+    AND A.data_status = #{arg1,jdbcType=VARCHAR};
+  </select>
+  <select id="existCheck" resultType="java.lang.Integer">
+    SELECT
+      COUNT(1) AS TotalCount
+    FROM bank_worker_base.bank_branch_staff
+    WHERE staff_cellphone = #{arg0,jdbcType=VARCHAR};
+  </select>
+  <insert id="insert" parameterType="com.johnny.bankworker.entity.BankEntity" >
+    INSERT INTO bank_worker_base.bank_branch_staff (
+      bank_code,
+      branch_code,
+      staff_name,
+      staff_cellphone,
+      staff_post_id,
+      staff_photo_url,
+      staff_resume_url,
+      data_status,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{bankCode, jdbcType=VARCHAR},
+      #{branchCode, jdbcType=VARCHAR},
+      #{staffName, jdbcType=VARCHAR},
+      #{staffCellphone, jdbcType=VARCHAR},
+      #{staffPostID, jdbcType=INTEGER},
+      #{staffPhotoUrl, jdbcType=VARCHAR},
+      #{staffResumeUrl, jdbcType=VARCHAR},
+      'N',
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+  <update id="update" parameterType="com.johnny.bankworker.entity.BankBranchStaffEntity" >
+    UPDATE bank_worker_base.bank_branch_staff SET
+      staff_name = #{staffName,jdbcType=VARCHAR},
+      staff_cellphone = #{staffCellphone,jdbcType=VARCHAR},
+      staff_post_id = #{staffPostID,jdbcType=INTEGER},
+      staff_photo_url = #{staffPhotoUrl,jdbcType=VARCHAR},
+      staff_resume_url = #{staffResumeUrl,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE staff_id = #{staffID,jdbcType=INTEGER}
+  </update>
+  <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.BankBranchStaffEntity" >
+    UPDATE bank_worker_base.bank_branch_staff SET
+      data_status = #{dataStatus,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE staff_id = #{staffID,jdbcType=INTEGER}
+  </update>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    DELETE FROM bank_worker_base.bank_branch_staff
+    WHERE staff_id = #{id,jdbcType=INTEGER}
+  </delete>
+</mapper>

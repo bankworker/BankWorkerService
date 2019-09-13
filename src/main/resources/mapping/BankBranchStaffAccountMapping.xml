@@ -206,6 +206,16 @@
       update_user = #{updateUser,jdbcType=VARCHAR}
     WHERE account_id = #{accountID,jdbcType=INTEGER}
   </update>
+  <update id="updateByAccount" parameterType="com.johnny.bankworker.entity.BankBranchStaffAccountEntity" >
+    UPDATE bank_worker_base.bank_branch_staff_account SET
+      staff_account = #{account,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode, jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND staff_account = #{accountOriginal,jdbcType=VARCHAR}
+    AND system_id = #{systemID,jdbcType=VARCHAR};
+  </update>
+
   <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.BankBranchStaffAccountEntity" >
     UPDATE bank_worker_base.bank_branch_staff_account SET
       data_status = #{dataStatus,jdbcType=VARCHAR},
@@ -213,7 +223,14 @@
     WHERE account_id = #{accountID,jdbcType=INTEGER}
   </update>
   <delete id="delete" parameterType="java.lang.Integer" >
-    DELETE FROM bank_worker_base.bank_branch_staff_account SET
+    DELETE FROM bank_worker_base.bank_branch_staff_account
     WHERE account_id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByAccount" parameterType="com.johnny.bankworker.entity.BankBranchStaffAccountEntity" >
+    DELETE FROM bank_worker_base.bank_branch_staff_account
+    WHERE bank_code = #{bankCode, jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND staff_account = #{account,jdbcType=VARCHAR}
+    AND system_id = #{systemID,jdbcType=VARCHAR};
   </delete>
 </mapper>
