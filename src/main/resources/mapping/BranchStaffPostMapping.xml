@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.BranchStaffPostMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.BranchStaffPostEntity" >
+    <id column="staff_post_id" property="staffPostID" jdbcType="INTEGER" />
+    <result column="staff_post_name" property="staffPostName" jdbcType="VARCHAR" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="branch_code" property="branchCode" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="searchTotalCount4Branch" parameterType="string" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1) AS TotalCount
+    FROM bank_worker_base.staff_post_setting
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR};
+  </select>
+  <select id="searchList4Branch" resultMap="BaseResultMap">
+    SELECT
+      A.staff_post_id,
+      A.staff_post_name,
+      A.bank_code,
+      A.branch_code,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.staff_post_setting A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    WHERE A.bank_code = #{arg2,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg3,jdbcType=VARCHAR}
+    ORDER BY A.update_time DESC
+    LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
+  </select>
+  <select id="searchByID" resultMap="BaseResultMap">
+    SELECT
+      A.staff_post_id,
+      A.staff_post_name,
+      A.bank_code,
+      A.branch_code,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.staff_post_setting A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    WHERE A.staff_post_id = #{arg0,jdbcType=INTEGER};
+  </select>
+  <select id="existCheck4Branch" resultType="java.lang.Integer">
+    SELECT
+      COUNT(1) AS TotalCount
+    FROM bank_worker_base.staff_post_setting
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR}
+    ANd staff_post_name = #{arg2,jdbcType=VARCHAR};
+  </select>
+
+  <select id="searchStaffPostIsUsingCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(1) AS TotalCount
+    FROM bank_worker_base.bank_branch_staff
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR}
+    ANd staff_post_id = #{arg2,jdbcType=VARCHAR};
+  </select>
+
+  <insert id="insert" parameterType="com.johnny.bankworker.entity.BranchStaffPostEntity" >
+    INSERT INTO bank_worker_base.staff_post_setting (
+      bank_code,
+      branch_code,
+      staff_post_name,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{bankCode, jdbcType=VARCHAR},
+      #{branchCode, jdbcType=VARCHAR},
+      #{staffPostName, jdbcType=VARCHAR},
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+  <update id="update" parameterType="com.johnny.bankworker.entity.BranchStaffPostEntity" >
+    UPDATE bank_worker_base.staff_post_setting SET
+      staff_post_name = #{staffPostName,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE staff_post_id = #{staffPostID,jdbcType=INTEGER}
+  </update>
+
+  <delete id="delete" parameterType="java.lang.Integer" >
+    DELETE FROM bank_worker_base.staff_post_setting
+    WHERE staff_post_id = #{id,jdbcType=INTEGER}
+  </delete>
+</mapper>
