@@ -74,7 +74,7 @@ public class BankBranchStaffAccountServiceImpl implements BankBranchStaffAccount
                 return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.NO_SEARCH_COUNT, ResponseDataConstant.NO_DATA);
             }
 
-            List<BankBranchStaffAccountEntity> authorizedSystemEntityList = myMapper.searchAuthorizedSystem(accountEntity.getAccount(),accountEntity.getPassword());
+            List<BankBranchStaffAccountEntity> authorizedSystemEntityList = myMapper.searchAuthorizedSystem(accountEntity.getBankCode(),accountEntity.getBranchCode());
             if(authorizedSystemEntityList.isEmpty()){
                 return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.NO_SEARCH_COUNT, ResponseDataConstant.NO_DATA);
             }
@@ -156,6 +156,20 @@ public class BankBranchStaffAccountServiceImpl implements BankBranchStaffAccount
             ObjectConvertUtils.toBean(dto, entity);
             entity.setUpdateUser(dto.getLoginUser());
             int affectRow = myMapper.update(entity);
+            return UnifiedResponseManager.buildSubmitSuccessResponse(affectRow);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            return UnifiedResponseManager.buildExceptionResponse();
+        }
+    }
+
+    @Override
+    public UnifiedResponse changePassword(BankBranchStaffAccountDTO dto) {
+        try {
+            BankBranchStaffAccountEntity entity = new BankBranchStaffAccountEntity();
+            ObjectConvertUtils.toBean(dto, entity);
+            entity.setUpdateUser(dto.getLoginUser());
+            int affectRow = myMapper.updatePassword(entity);
             return UnifiedResponseManager.buildSubmitSuccessResponse(affectRow);
         } catch (Exception ex) {
             logger.error(ex.toString());

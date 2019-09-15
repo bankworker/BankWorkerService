@@ -139,25 +139,10 @@
 
   <select id="searchAuthorizedSystem" resultMap="BaseResultMap">
     SELECT
-      A.account_id,
       A.bank_code,
-      D.bank_name,
       A.branch_code,
-      E.branch_name,
       A.system_id,
-      C.system_name,
-      A.staff_account,
-      IFNULL(F.staff_name, '管理员') AS staff_name,
-      A.data_status,
-      CASE WHEN A.data_status = 'N' THEN '正常'
-      WHEN A.data_status = 'F' THEN '冻结'
-      WHEN A.data_status = 'D' THEN '删除'
-      ELSE '未知数据状态'
-      END AS data_status_text,
-      B.admin_name AS create_user,
-      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
-      B.admin_name AS update_user,
-      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+      C.system_name
     FROM bank_worker_base.bank_branch_staff_account A
     LEFT JOIN bank_worker_base.system_admin B
     ON A.create_user = B.admin_id
@@ -169,9 +154,11 @@
     ON A.branch_code = E.branch_code
     LEFT JOIN bank_worker_base.bank_branch_staff F
     ON A.staff_account = F.staff_cellphone
-    WHERE A.staff_account = #{arg0,jdbcType=VARCHAR}
-    AND A.staff_password = #{arg1,jdbcType=VARCHAR}
-    AND A.data_status = 'N';
+    WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg1,jdbcType=VARCHAR}
+    AND A.data_status = 'N'
+    GROUP BY A.system_id
+    ORDER BY A.system_id;
   </select>
 
   <select id="existCheck" resultType="java.lang.Integer">
@@ -205,6 +192,15 @@
       staff_password = #{password,jdbcType=VARCHAR},
       update_user = #{updateUser,jdbcType=VARCHAR}
     WHERE account_id = #{accountID,jdbcType=INTEGER}
+  </update>
+  <update id="updatePassword" parameterType="com.johnny.bankworker.entity.BankBranchStaffAccountEntity" >
+    UPDATE bank_worker_base.bank_branch_staff_account SET
+      staff_password = #{password,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND system_id = #{systemID,jdbcType=INTEGER}
+    AND account_id = #{accountID,jdbcType=INTEGER}
   </update>
   <update id="updateByAccount" parameterType="com.johnny.bankworker.entity.BankBranchStaffAccountEntity" >
     UPDATE bank_worker_base.bank_branch_staff_account SET

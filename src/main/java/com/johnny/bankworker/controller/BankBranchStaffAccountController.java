@@ -1,6 +1,7 @@
 package com.johnny.bankworker.controller;
 
 import com.johnny.bankworker.dto.BankBranchStaffAccount4OriginalDTO;
+import com.johnny.bankworker.dto.BankBranchStaffAccountDTO;
 import com.johnny.bankworker.service.impl.BankBranchStaffAccountServiceImpl;
 import com.johnny.bankworker.vo.UnifiedResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,11 @@ public class BankBranchStaffAccountController {
     @RequestMapping(method = RequestMethod.PUT)
     public UnifiedResponse change(@RequestBody BankBranchStaffAccount4OriginalDTO dto){
         return serviceImpl.change(dto);
+    }
+
+    @RequestMapping(value="/changePassword", method = RequestMethod.PUT)
+    public UnifiedResponse changePassword(@RequestBody BankBranchStaffAccountDTO dto){
+        return serviceImpl.changePassword(dto);
     }
 
     @RequestMapping(value="/changeStatus", method = RequestMethod.PUT)
