@@ -12,4 +12,6 @@ public interface BankBranchMapper extends BaseMapper<BankBranchEntity> {
     BankBranchEntity searchListByCode(String bankCode, String branchCode);
 
     int updateLogo(BankBranchEntity entity);
+
+    int updateBackImage(BankBranchEntity entity);
 }

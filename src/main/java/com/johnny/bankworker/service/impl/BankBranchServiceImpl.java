@@ -171,6 +171,20 @@ public class BankBranchServiceImpl implements BankBranchService {
     }
 
     @Override
+    public UnifiedResponse changeBackImage(BankBranchDTO dto) {
+        try {
+            BankBranchEntity entity = new BankBranchEntity();
+            ObjectConvertUtils.toBean(dto, entity);
+            entity.setUpdateUser(dto.getLoginUser());
+            int affectRow = myMapper.updateBackImage(entity);
+            return UnifiedResponseManager.buildSubmitSuccessResponse(affectRow);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            return UnifiedResponseManager.buildExceptionResponse();
+        }
+    }
+
+    @Override
     public UnifiedResponse delete(int id) {
         try {
             int affectRow = myMapper.delete(id);

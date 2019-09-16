@@ -13,6 +13,7 @@ public class BankBranchDTO extends BaseDTO {
     private Integer districtCode;
     private String address;
     private String branchLogo;
+    private String branchBackImage;
     private String branchContact;
     private String branchContactCellphone;
 }

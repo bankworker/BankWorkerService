@@ -15,6 +15,7 @@
     <result column="district_name" property="districtName" jdbcType="VARCHAR" />
     <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="branch_logo" property="branchLogo" jdbcType="VARCHAR" />
+    <result column="branch_back_image" property="branchBackImage" jdbcType="VARCHAR" />
     <result column="branch_contact" property="branchContact" jdbcType="VARCHAR" />
     <result column="branch_contact_cellphone" property="branchContactCellphone" jdbcType="VARCHAR" />
     <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
@@ -48,6 +49,7 @@
       F.region_name AS district_name,
       A.address,
       A.branch_logo,
+      A.branch_back_image,
       A.branch_contact,
       A.branch_contact_cellphone,
       A.data_status,
@@ -93,6 +95,7 @@
       F.region_name AS district_name,
       A.address,
       A.branch_logo,
+      A.branch_back_image,
       A.branch_contact,
       A.branch_contact_cellphone,
       A.data_status,
@@ -135,6 +138,7 @@
       F.region_name AS district_name,
       A.address,
       A.branch_logo,
+      A.branch_back_image,
       A.branch_contact,
       A.branch_contact_cellphone,
       A.data_status,
@@ -180,6 +184,7 @@
       F.region_name AS district_name,
       A.address,
       A.branch_logo,
+      A.branch_back_image,
       A.branch_contact,
       A.branch_contact_cellphone,
       A.data_status,
@@ -267,6 +272,13 @@
   <update id="updateLogo" parameterType="com.johnny.bankworker.entity.BankBranchEntity" >
     UPDATE bank_worker_base.bank_branch SET
       branch_logo = #{branchLogo,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=INTEGER}
+    AND branch_code = #{branchCode,jdbcType=INTEGER};
+  </update>
+  <update id="updateBackImage" parameterType="com.johnny.bankworker.entity.BankBranchEntity" >
+    UPDATE bank_worker_base.bank_branch SET
+      branch_back_image = #{branchBackImage,jdbcType=VARCHAR},
       update_user = #{updateUser,jdbcType=VARCHAR}
     WHERE bank_code = #{bankCode,jdbcType=INTEGER}
     AND branch_code = #{branchCode,jdbcType=INTEGER};
