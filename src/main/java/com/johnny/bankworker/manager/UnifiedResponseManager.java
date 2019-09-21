@@ -44,6 +44,17 @@ public class UnifiedResponseManager {
                 ResponseDataConstant.NO_DATA);
     }
 
+    public static <T> UnifiedResponse buildSubmitSuccessResponse(int affectCount, T data){
+        return buildUnifiedResponse(ResponseCodeConstant.SUCCESS,
+                ResponseMessageConstant.SUCCESS,
+                ResponseResultConstant.SUCCESS,
+                ResponseTypeConstant.SUCCESS,
+                ResponseOptionConstant.NO,
+                affectCount,
+                ResponseDataConstant.NO_SEARCH_COUNT,
+                data);
+    }
+
     public static UnifiedResponse buildExceptionResponse(){
         return buildUnifiedResponse(ResponseCodeConstant.EXCEPTION,
                 ResponseMessageConstant.EXCEPTION,
