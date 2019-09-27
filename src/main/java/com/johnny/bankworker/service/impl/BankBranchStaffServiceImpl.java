@@ -45,7 +45,7 @@ public class BankBranchStaffServiceImpl implements BankBranchStaffService {
                 ObjectConvertUtils.toBean(entity, model);
                 modelList.add(model);
             }
-            return UnifiedResponseManager.buildSearchSuccessResponse(modelList.size(), modelList);
+            return UnifiedResponseManager.buildSearchSuccessResponse(totalCount, modelList);
         } catch (Exception ex) {
             logger.error(ex.toString());
             return UnifiedResponseManager.buildExceptionResponse();
