@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.MediaModuleDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.MediaModuleDetailEntity" >
+    <id column="media_detail_id" property="mediaDetailID" jdbcType="INTEGER" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="branch_code" property="branchCode" jdbcType="VARCHAR" />
+    <result column="media_module_id" property="mediaModuleID" jdbcType="INTEGER" />
+    <result column="media_detail_type" property="mediaDetailType" jdbcType="VARCHAR" />
+    <result column="media_detail_content" property="mediaDetailContent" jdbcType="VARCHAR" />
+    <result column="media_detail_order" property="mediaDetailOrder" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <select id="searchListOfMediaModule" resultMap="BaseResultMap">
+    SELECT
+      A.media_detail_id,
+      A.bank_code,
+      A.branch_code,
+      A.media_module_id,
+      A.media_detail_type,
+      A.media_detail_content,
+      A.media_detail_order,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_media.media_module_detail A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg1,jdbcType=VARCHAR}
+    AND A.media_module_id = #{arg2,jdbcType=INTEGER}
+    ORDER BY A.media_detail_order;
+  </select>
+
+  <select id="searchByMediaModuleDetailID" resultMap="BaseResultMap">
+    SELECT
+      A.media_detail_id,
+      A.bank_code,
+      A.branch_code,
+      A.media_module_id,
+      A.media_detail_type,
+      A.media_detail_content,
+      A.media_detail_order,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_media.media_module_detail A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg1,jdbcType=VARCHAR}
+    AND A.media_module_id = #{arg2,jdbcType=INTEGER}
+    AND A.media_detail_id = #{arg3,jdbcType=INTEGER};
+  </select>
+
+  <select id="searchMaxOrder" resultType="java.lang.Integer">
+    SELECT
+    IFNULL(MAX(media_detail_order), 0) AS MaxOrder
+    FROM bank_worker_media.media_module_detail
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR}
+    AND media_module_id = #{arg2,jdbcType=INTEGER}
+    AND media_detail_type = #{arg3,jdbcType=VARCHAR};
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="mediaDetailID" parameterType="com.johnny.bankworker.entity.MediaModuleDetailEntity" >
+    INSERT INTO bank_worker_media.media_module_detail (
+      bank_code,
+      branch_code,
+      media_module_id,
+      media_detail_type,
+      media_detail_content,
+      media_detail_order,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{bankCode, jdbcType=VARCHAR},
+      #{branchCode, jdbcType=VARCHAR},
+      #{mediaModuleID, jdbcType=INTEGER},
+      #{mediaDetailType, jdbcType=VARCHAR},
+      #{mediaDetailContent, jdbcType=VARCHAR},
+      #{mediaDetailOrder, jdbcType=INTEGER},
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <update id="update" parameterType="com.johnny.bankworker.entity.MediaModuleDetailEntity" >
+    UPDATE bank_worker_media.media_module_detail SET
+      media_detail_content = #{mediaDetailContent,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND media_detail_id = #{mediaDetailID,jdbcType=INTEGER};
+  </update>
+
+  <update id="updateOrder" parameterType="com.johnny.bankworker.entity.MediaModuleDetailEntity" >
+    UPDATE bank_worker_media.media_module_detail SET
+      media_detail_order = #{mediaDetailOrder,jdbcType=INTEGER},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND media_detail_id = #{mediaDetailID,jdbcType=INTEGER};
+  </update>
+
+  <delete id="deleteAll">
+    DELETE FROM bank_worker_media.media_module_detail
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR}
+    AND media_module_id = #{arg2,jdbcType=INTEGER};
+  </delete>
+
+  <delete id="deleteDetail">
+    DELETE FROM bank_worker_media.media_module_detail
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR}
+    AND media_module_id = #{arg2,jdbcType=INTEGER}
+    AND media_detail_id = #{arg3,jdbcType=INTEGER};
+  </delete>
+</mapper>

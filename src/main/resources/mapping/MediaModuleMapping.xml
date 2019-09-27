@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.MediaModuleMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.MediaModuleEntity" >
+    <id column="media_module_id" property="mediaModuleID" jdbcType="INTEGER" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="branch_code" property="branchCode" jdbcType="VARCHAR" />
+    <result column="media_module_name" property="mediaModuleName" jdbcType="VARCHAR" />
+    <result column="media_module_type" property="mediaModuleType" jdbcType="VARCHAR" />
+    <result column="media_module_type_text" property="mediaModuleTypeText" jdbcType="VARCHAR" />
+    <result column="media_module_order" property="mediaModuleOrder" jdbcType="INTEGER" />
+    <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
+    <result column="data_status_text" property="dataStatusText" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="searchTotalCount4Branch" parameterType="string" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1) AS TotalCount
+    FROM bank_worker_media.media_module
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR};
+  </select>
+  <select id="searchList4Branch" resultMap="BaseResultMap">
+    SELECT
+      A.media_module_id,
+      A.bank_code,
+      A.branch_code,
+      A.media_module_name,
+      A.media_module_type,
+      CASE WHEN A.media_module_type = 'I' THEN '图文'
+        WHEN A.media_module_type = 'V' THEN '视频'
+        ELSE '未知数据状态'
+      END AS media_module_type_text,
+      A.media_module_order,
+      A.data_status,
+      CASE WHEN A.data_status = 'A' THEN '使用中'
+        WHEN A.data_status = 'D' THEN '未使用'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_media.media_module A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    WHERE A.bank_code = #{arg2,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg3,jdbcType=VARCHAR}
+    ORDER BY A.media_module_id DESC
+    LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
+  </select>
+
+
+  <select id="searchByModuleID" resultMap="BaseResultMap">
+    SELECT
+      A.media_module_id,
+      A.bank_code,
+      A.branch_code,
+      A.media_module_name,
+      A.media_module_type,
+      CASE WHEN A.media_module_type = 'I' THEN '图文'
+        WHEN A.media_module_type = 'V' THEN '视频'
+        ELSE '未知数据状态'
+      END AS media_module_type_text,
+      A.media_module_order,
+      A.data_status,
+      CASE WHEN A.data_status = 'A' THEN '使用中'
+        WHEN A.data_status = 'D' THEN '未使用'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_media.media_module A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg1,jdbcType=VARCHAR}
+    AND A.media_module_id = #{arg2,jdbcType=INTEGER};
+  </select>
+
+  <select id="searchMaxOrder" resultType="java.lang.Integer">
+    SELECT
+    IFNULL(MAX(media_module_order), 0) AS MaxOrder
+    FROM bank_worker_media.media_module
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR};
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="mediaModuleID" parameterType="com.johnny.bankworker.entity.MediaModuleEntity" >
+    INSERT INTO bank_worker_media.media_module (
+      bank_code,
+      branch_code,
+      media_module_name,
+      media_module_type,
+      media_module_order,
+      data_status,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{bankCode, jdbcType=VARCHAR},
+      #{branchCode, jdbcType=VARCHAR},
+      #{mediaModuleName, jdbcType=VARCHAR},
+      #{mediaModuleType, jdbcType=VARCHAR},
+      #{mediaModuleOrder, jdbcType=INTEGER},
+      'A',
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <update id="update" parameterType="com.johnny.bankworker.entity.MediaModuleEntity" >
+    UPDATE bank_worker_media.media_module SET
+      media_module_name = #{mediaModuleName,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND media_module_id = #{mediaModuleID,jdbcType=INTEGER};
+  </update>
+
+  <update id="updateOrder" parameterType="com.johnny.bankworker.entity.MediaModuleEntity" >
+    UPDATE bank_worker_media.media_module SET
+      media_module_order = #{mediaModuleOrder,jdbcType=INTEGER},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND media_module_id = #{mediaModuleID,jdbcType=INTEGER};
+  </update>
+
+  <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.MediaModuleEntity" >
+    UPDATE bank_worker_media.media_module SET
+      data_status = #{dataStatus,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND media_module_id = #{mediaModuleID,jdbcType=INTEGER};
+  </update>
+
+  <delete id="deleteMediaModule">
+    DELETE FROM bank_worker_media.media_module
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR}
+    AND media_module_id = #{arg2,jdbcType=INTEGER};
+  </delete>
+</mapper>
