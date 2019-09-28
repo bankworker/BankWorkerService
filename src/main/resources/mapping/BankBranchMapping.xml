@@ -122,7 +122,6 @@
     WHERE A.branch_id = #{arg0,jdbcType=INTEGER}
     AND A.data_status = #{arg1,jdbcType=VARCHAR};
   </select>
-
   <select id="searchListByBankCode" resultMap="BaseResultMap">
     SELECT
       A.branch_id,
@@ -168,7 +167,6 @@
     AND A.data_status = 'N'
     AND G.data_status = 'N';
   </select>
-
   <select id="searchListByCode" resultMap="BaseResultMap">
     SELECT
       A.branch_id,
@@ -215,7 +213,6 @@
     AND A.data_status = 'N'
     AND G.data_status = 'N';
   </select>
-
   <select id="existCheck" resultType="java.lang.Integer">
     SELECT
       COUNT(1) AS TotalCount

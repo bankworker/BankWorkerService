@@ -49,6 +49,11 @@ public class BranchArchiveController {
         return serviceImpl.changeOrder(dto);
     }
 
+    @RequestMapping(value="/changeStatus", method = RequestMethod.PUT)
+    public UnifiedResponse changeStatus(@RequestBody BranchArchiveDTO dto){
+        return serviceImpl.changeDataStatus(dto);
+    }
+
     @RequestMapping(value="/changePosition", method = RequestMethod.PUT)
     public UnifiedResponse changePosition(@RequestBody BranchArchiveDTO dto){
         return serviceImpl.changePosition(dto);

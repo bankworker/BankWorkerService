@@ -32,6 +32,7 @@
       A.archive_name,
       A.archive_type,
       A.archive_order,
+      A.data_status,
       IFNULL(B.staff_name, '管理员') AS create_user,
       DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
       IFNULL(C.staff_name, '管理员') AS update_user,
@@ -130,7 +131,7 @@
       #{archiveName, jdbcType=VARCHAR},
       #{archiveType, jdbcType=VARCHAR},
       #{archiveOrder, jdbcType=INTEGER},
-      'N',
+      'A',
       #{createUser, jdbcType=VARCHAR},
       #{updateUser, jdbcType=VARCHAR}
     )
@@ -138,6 +139,15 @@
   <update id="update" parameterType="com.johnny.bankworker.entity.BranchArchiveEntity" >
     UPDATE bank_worker_archives.branch_archives SET
       archive_name = #{archiveName,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND archive_id = #{archiveID,jdbcType=INTEGER};
+  </update>
+
+  <update id="updateDataStatus" parameterType="com.johnny.bankworker.entity.BranchArchiveEntity" >
+    UPDATE bank_worker_archives.branch_archives SET
+      data_status = #{dataStatus,jdbcType=VARCHAR},
       update_user = #{updateUser,jdbcType=VARCHAR}
     WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
     AND branch_code = #{branchCode,jdbcType=VARCHAR}

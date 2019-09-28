@@ -183,6 +183,20 @@ public class BranchArchiveServiceImpl implements BranchArchiveService {
         }
     }
 
+    @Override
+    public UnifiedResponse changeDataStatus(BranchArchiveDTO dto) {
+        try {
+            BranchArchiveEntity entity = new BranchArchiveEntity();
+            ObjectConvertUtils.toBean(dto, entity);
+            entity.setUpdateUser(dto.getLoginUser());
+            int affectRow = myMapper.updateDataStatus(entity);
+            return UnifiedResponseManager.buildSubmitSuccessResponse(affectRow);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            return UnifiedResponseManager.buildExceptionResponse();
+        }
+    }
+
     /**
      * 删除指定支行的指标
      * @param bankCode   银行编码
@@ -213,11 +227,6 @@ public class BranchArchiveServiceImpl implements BranchArchiveService {
 
     @Override
     public UnifiedResponse existCheck(String value) {
-        return null;
-    }
-
-    @Override
-    public UnifiedResponse changeDataStatus(BranchArchiveDTO dto) {
         return null;
     }
 
