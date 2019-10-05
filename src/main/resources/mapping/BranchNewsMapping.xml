@@ -48,32 +48,6 @@
     ORDER BY A.update_time DESC
     LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
   </select>
-  <select id="searchByNewsID" resultMap="BaseResultMap">
-    SELECT
-      A.news_id,
-      A.bank_code,
-      A.branch_code,
-      A.thumbnail_url,
-      A.news_title,
-      DATE_FORMAT(A.news_date, '%Y-%m-%d %H:%i:%s') AS news_date,
-      A.news_content,
-      A.data_status,
-      CASE WHEN A.data_status = 'N' THEN '正常'
-        WHEN A.data_status = 'F' THEN '冻结'
-        WHEN A.data_status = 'D' THEN '删除'
-        ELSE '未知数据状态'
-      END AS data_status_text,
-      IFNULL(B.staff_name, '管理员') AS create_user,
-      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
-      IFNULL(C.staff_name, '管理员') AS update_user,
-      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
-    FROM bank_worker_base.branch_news A
-    LEFT JOIN bank_worker_base.bank_branch_staff B
-    ON A.create_user = B.staff_cellphone
-    LEFT JOIN bank_worker_base.bank_branch_staff C
-    ON A.update_user = C.staff_cellphone
-    WHERE A.news_id = #{newsID,jdbcType=INTEGER};
-  </select>
   <select id="searchTotalCount4Branch" resultType="java.lang.Integer">
     SELECT
     COUNT(1) AS TotalCount
@@ -110,6 +84,34 @@
     ORDER BY A.update_time DESC
     LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
     </select>
+  <select id="searchByNewsID" resultMap="BaseResultMap">
+    SELECT
+      A.news_id,
+      A.bank_code,
+      A.branch_code,
+      A.thumbnail_url,
+      A.news_title,
+      DATE_FORMAT(A.news_date, '%Y-%m-%d %H:%i:%s') AS news_date,
+      A.news_content,
+      A.data_status,
+      CASE WHEN A.data_status = 'N' THEN '正常'
+        WHEN A.data_status = 'F' THEN '冻结'
+        WHEN A.data_status = 'D' THEN '删除'
+        ELSE '未知数据状态'
+      END AS data_status_text,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.branch_news A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg1,jdbcType=VARCHAR}
+    AND A.news_id = #{arg2,jdbcType=INTEGER};
+  </select>
   <insert id="insert" useGeneratedKeys="true" keyProperty="newsID" parameterType="com.johnny.bankworker.entity.BranchNewsEntity" >
     INSERT INTO bank_worker_base.branch_news (
       bank_code,

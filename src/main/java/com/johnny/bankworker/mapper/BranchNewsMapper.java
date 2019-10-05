@@ -9,7 +9,7 @@ import java.util.List;
 public interface BranchNewsMapper extends BaseMapper<BranchNewsEntity> {
     int searchTotalCount4Branch(String bankCode, String branchCode);
 
-    BranchNewsEntity searchByNewsID(int newsID);
+    BranchNewsEntity searchByNewsID(String bankCode, String branchCode, int newsID);
 
     List<BranchNewsEntity> searchList4Branch(int startIndex, int pageSize, String bankCode, String branchCode);
 }

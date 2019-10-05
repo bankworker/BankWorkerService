@@ -56,10 +56,10 @@ public class BranchNewsServiceImpl implements BranchNewsService {
     }
 
     @Override
-    public UnifiedResponse find(int newsID) {
+    public UnifiedResponse find(String bankCode, String branchCode, int newsID) {
         try {
             BranchNewsVO model = new BranchNewsVO();
-            BranchNewsEntity entity =  branchNewsMapper.searchByNewsID(newsID);
+            BranchNewsEntity entity =  branchNewsMapper.searchByNewsID(bankCode, branchCode, newsID);
             if(entity == null){
                 return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.NO_SEARCH_COUNT, ResponseDataConstant.NO_DATA);
             }

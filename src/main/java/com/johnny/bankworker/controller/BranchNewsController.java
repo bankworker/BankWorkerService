@@ -20,9 +20,11 @@ public class BranchNewsController {
         return serviceImpl.findList4Branch(pageNumber, pageSize, bankCode, branchCode);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public UnifiedResponse get(@PathVariable("id") int id){
-        return serviceImpl.find(id);
+    @RequestMapping(value = "/{bankCode}/{branchCode}/{newsID}", method = RequestMethod.GET)
+    public UnifiedResponse get(@PathVariable("bankCode") String bankCode,
+                               @PathVariable("branchCode") String branchCode,
+                               @PathVariable("newsID") int newsID){
+        return serviceImpl.find(bankCode, branchCode, newsID);
     }
 
 
