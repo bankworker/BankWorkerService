@@ -17,6 +17,15 @@ public interface BranchArchiveDetailMapper extends BaseMapper<BranchArchiveDetai
     List<BranchArchiveDetailEntity> searchListOfArchive(String bankCode, String branchCode, int archiveID);
 
     /**
+     * 根据条件，查询指定支行详细档案（图片、文件、视频）的信息
+     * @param bankCode 银行编码
+     * @param branchCode 支行编码
+     * @param fuzzyContent 模糊条件
+     * @return 返回档案详细信息
+     */
+    List<BranchArchiveDetailEntity> searchList4Fuzzy(String bankCode, String branchCode, String fuzzyContent);
+
+    /**
      * 通过总行编码、支行编码、档案编号查询对应的一条档案详细信息
      * @param bankCode 总行编码
      * @param branchCode 支行编码

@@ -16,6 +16,7 @@ public class BankBranchEntity extends BaseEntity {
     private int districtCode;
     private String districtName;
     private String address;
+    private String bankLogo;
     private String branchLogo;
     private String branchBackImage;
     private String branchContact;

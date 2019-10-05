@@ -14,6 +14,7 @@
     <result column="district_code" property="districtCode" jdbcType="INTEGER" />
     <result column="district_name" property="districtName" jdbcType="VARCHAR" />
     <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="bank_logo" property="bankLogo" jdbcType="VARCHAR" />
     <result column="branch_logo" property="branchLogo" jdbcType="VARCHAR" />
     <result column="branch_back_image" property="branchBackImage" jdbcType="VARCHAR" />
     <result column="branch_contact" property="branchContact" jdbcType="VARCHAR" />
@@ -181,6 +182,7 @@
       A.district_code,
       F.region_name AS district_name,
       A.address,
+      G.bank_logo,
       A.branch_logo,
       A.branch_back_image,
       A.branch_contact,

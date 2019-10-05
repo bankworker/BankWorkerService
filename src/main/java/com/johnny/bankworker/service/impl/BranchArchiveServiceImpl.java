@@ -53,6 +53,33 @@ public class BranchArchiveServiceImpl implements BranchArchiveService {
     }
 
     /**
+     * 查询指定支行的指标信息
+     * @param bankCode        银行编码
+     * @param branchCode      支行编码
+     * @param archiveParentID 父指标编号
+     * @return 返回支行的指标信息
+     */
+    @Override
+    public UnifiedResponse findList(String bankCode, String branchCode, int archiveParentID) {
+        try {
+            List<BranchArchiveVO> modelList = new ArrayList<>();
+            List<BranchArchiveEntity> entityList =  myMapper.searchByParentArchive(bankCode, branchCode, archiveParentID, "A");
+            if(entityList.isEmpty()){
+                return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.NO_SEARCH_COUNT, ResponseDataConstant.NO_DATA);
+            }
+            for (BranchArchiveEntity entity : entityList) {
+                BranchArchiveVO model = new BranchArchiveVO();
+                ObjectConvertUtils.toBean(entity, model);
+                modelList.add(model);
+            }
+            return UnifiedResponseManager.buildSearchSuccessResponse(modelList.size(), modelList);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            return UnifiedResponseManager.buildExceptionResponse();
+        }
+    }
+
+    /**
      * 校验指定支行中，某个档案是否已经存在
      * @param bankCode    银行编码
      * @param branchCode  支行编码
@@ -81,7 +108,7 @@ public class BranchArchiveServiceImpl implements BranchArchiveService {
     @Override
     public UnifiedResponse existCheck(String bankCode, String branchCode, int archiveParentID) {
         try {
-            List<BranchArchiveEntity> entityList =  myMapper.searchByParentArchive(bankCode, branchCode, archiveParentID);
+            List<BranchArchiveEntity> entityList =  myMapper.searchByParentArchive(bankCode, branchCode, archiveParentID, null);
             int childArchivesCount = entityList.isEmpty() ? 0 : entityList.size();
             boolean isExist = childArchivesCount > 0;
             return UnifiedResponseManager.buildSearchSuccessResponse(childArchivesCount, isExist);

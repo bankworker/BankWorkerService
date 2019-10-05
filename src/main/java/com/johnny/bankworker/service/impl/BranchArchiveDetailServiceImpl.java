@@ -51,6 +51,35 @@ public class BranchArchiveDetailServiceImpl implements BranchArchiveDetailServic
     }
 
     /**
+     * 根据条件，查询指定支行详细档案（图片、文件、视频）的信息
+     *
+     * @param bankCode     银行编码
+     * @param branchCode   支行编码
+     * @param fuzzyContent 模糊条件
+     * @return 返回档案详细信息
+     */
+    @Override
+    public UnifiedResponse findList4Fuzzy(String bankCode, String branchCode, String fuzzyContent) {
+        try {
+            fuzzyContent = "%" + fuzzyContent + "%";
+            List<BranchArchiveDetailVO> modelList = new ArrayList<>();
+            List<BranchArchiveDetailEntity> entityList =  myMapper.searchList4Fuzzy(bankCode, branchCode, fuzzyContent);
+            if(entityList.isEmpty()){
+                return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.NO_SEARCH_COUNT, ResponseDataConstant.NO_DATA);
+            }
+            for (BranchArchiveDetailEntity entity : entityList) {
+                BranchArchiveDetailVO model = new BranchArchiveDetailVO();
+                ObjectConvertUtils.toBean(entity, model);
+                modelList.add(model);
+            }
+            return UnifiedResponseManager.buildSearchSuccessResponse(modelList.size(), modelList);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            return UnifiedResponseManager.buildExceptionResponse();
+        }
+    }
+
+    /**
      * 删除指定支行的某个档案的详细信息
      * @param bankCode   银行编码
      * @param branchCode 支行编码

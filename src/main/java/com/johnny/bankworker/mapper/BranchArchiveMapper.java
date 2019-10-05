@@ -31,9 +31,10 @@ public interface BranchArchiveMapper extends BaseMapper<BranchArchiveEntity> {
      * @param bankCode 总行编码
      * @param branchCode 支行编码
      * @param archiveParentID 父层级的档案编号
+     * @param dataStatus 数据状态
      * @return 反馈父层级档案下的所有档案信息
      */
-    List<BranchArchiveEntity> searchByParentArchive(String bankCode, String branchCode, int archiveParentID);
+    List<BranchArchiveEntity> searchByParentArchive(String bankCode, String branchCode, int archiveParentID, String dataStatus);
 
     /**
      * 查询指定支行，某个档案下的子档案，当前最大的顺序值

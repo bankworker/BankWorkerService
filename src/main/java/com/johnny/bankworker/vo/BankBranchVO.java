@@ -16,6 +16,7 @@ public class BankBranchVO extends BaseVO{
     private int districtCode;
     private String districtName;
     private String address;
+    private String bankLogo;
     private String branchLogo;
     private String branchBackImage;
     private String branchContact;

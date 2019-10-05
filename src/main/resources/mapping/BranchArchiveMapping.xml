@@ -100,7 +100,10 @@
     WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
     AND A.branch_code = #{arg1,jdbcType=VARCHAR}
     AND A.archive_parent_id = #{arg2,jdbcType=INTEGER}
-    ORDER BY A.update_time;
+    <if test="arg3 != null">
+      AND A.data_status = #{arg3,jdbcType=VARCHAR}
+    </if>
+    ORDER BY A.archive_order;
   </select>
   <select id="searchMaxOrder" resultType="java.lang.Integer">
     SELECT

@@ -14,6 +14,15 @@ public interface BranchArchiveDetailService extends BaseService<BranchArchiveDet
     UnifiedResponse findList(String bankCode, String branchCode, int archiveID);
 
     /**
+     * 根据条件，查询指定支行详细档案（图片、文件、视频）的信息
+     * @param bankCode 银行编码
+     * @param branchCode 支行编码
+     * @param fuzzyContent 模糊条件
+     * @return 返回档案详细信息
+     */
+    UnifiedResponse findList4Fuzzy(String bankCode, String branchCode, String fuzzyContent);
+
+    /**
      * 删除指定支行的某个档案的详细信息
      * @param bankCode 银行编码
      * @param branchCode 支行编码

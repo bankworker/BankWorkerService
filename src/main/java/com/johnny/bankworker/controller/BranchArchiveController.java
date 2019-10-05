@@ -20,6 +20,13 @@ public class BranchArchiveController {
         return serviceImpl.findList(pageNumber, pageSize, bankCode, branchCode);
     }
 
+    @RequestMapping(value = "/archiveList/{bankCode}/{branchCode}/{parentArchiveID}", method = RequestMethod.GET)
+    public UnifiedResponse findList(@PathVariable("bankCode") String bankCode,
+                                    @PathVariable("branchCode") String branchCode,
+                                    @PathVariable("parentArchiveID") int parentArchiveID){
+        return serviceImpl.findList(bankCode, branchCode, parentArchiveID);
+    }
+
     @RequestMapping(value = "/exist/{bankCode}/{branchCode}/{archiveName}", method = RequestMethod.GET)
     public UnifiedResponse checkExist(@PathVariable("bankCode") String bankCode,
                                       @PathVariable("branchCode") String branchCode,

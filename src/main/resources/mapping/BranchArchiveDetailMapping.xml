@@ -39,6 +39,32 @@
     ORDER BY A.archive_detail_order;
   </select>
 
+  <select id="searchList4Fuzzy" resultMap="BaseResultMap">
+    SELECT
+      A.archive_detail_id,
+      A.bank_code,
+      A.branch_code,
+      A.archive_id,
+      A.archive_detail_type,
+      A.archive_detail_content,
+      A.archive_detail_order,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_archives.branch_archives_detail A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg1,jdbcType=VARCHAR}
+    AND A.archive_detail_type IN ('I', 'F', 'V')
+    AND A.archive_detail_content LIKE #{arg2,jdbcType=VARCHAR}
+    ORDER BY A.update_time
+    LIMIT 0, 10;
+  </select>
+
   <select id="searchByArchiveDetailID" resultMap="BaseResultMap">
     SELECT
       A.archive_detail_id,

@@ -15,6 +15,15 @@ public interface BranchArchiveService extends BaseService<BranchArchiveDTO> {
     UnifiedResponse findList(int pageNumber, int pageSize, String bankCode, String branchCode);
 
     /**
+     * 查询指定支行的指标信息
+     * @param bankCode 银行编码
+     * @param branchCode 支行编码
+     * @param archiveParentID 父指标编号
+     * @return 返回支行的指标信息
+     */
+    UnifiedResponse findList(String bankCode, String branchCode, int archiveParentID);
+
+    /**
      * 校验指定支行中，某个档案是否已经存在
      * @param bankCode 银行编码
      * @param branchCode 支行编码
