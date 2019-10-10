@@ -108,6 +108,22 @@ public class BankBranchStaffAccountServiceImpl implements BankBranchStaffAccount
         }
     }
 
+    @Override
+    public UnifiedResponse loginBalance(String bankCode, String branchCode, int postID, String cellphone, String password) {
+        try {
+            BankBranchStaffAccountVO model = new BankBranchStaffAccountVO();
+            BankBranchStaffAccountEntity entity =  myMapper.loginBalance(bankCode, branchCode, postID, cellphone, password);
+            if(entity == null){
+                return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.NO_SEARCH_COUNT, ResponseDataConstant.NO_DATA);
+            }
+
+            ObjectConvertUtils.toBean(entity, model);
+            return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.ONE_SEARCH_COUNT, model);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            return UnifiedResponseManager.buildExceptionResponse();
+        }
+    }
 
 
     @Override

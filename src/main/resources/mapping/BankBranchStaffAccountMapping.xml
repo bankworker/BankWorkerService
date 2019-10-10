@@ -12,6 +12,7 @@
     <result column="staff_account" property="account" jdbcType="VARCHAR" />
     <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
     <result column="staff_password" property="password" jdbcType="VARCHAR" />
+    <result column="staff_photo_url" property="staffPhotoUrl" jdbcType="VARCHAR" />
     <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
     <result column="data_status_text" property="dataStatusText" jdbcType="VARCHAR" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
@@ -135,6 +136,44 @@
     AND A.staff_password = #{arg1,jdbcType=VARCHAR}
     AND A.system_id = #{arg2,jdbcType=VARCHAR}
     AND A.data_status = 'N';
+  </select>
+
+  <select id="loginBalance" resultMap="BaseResultMap">
+    SELECT
+      B.account_id,
+      A.staff_id,
+      A.bank_code,
+      A.branch_code,
+      B.system_id,
+      A.staff_name,
+      A.staff_cellphone AS staff_account,
+      A.staff_post_id,
+      A.staff_photo_url,
+      A.staff_resume_url
+    FROM
+    (
+      SELECT
+        A.staff_id,
+        A.bank_code,
+        A.branch_code,
+        A.staff_name,
+        A.staff_cellphone,
+        A.staff_post_id,
+        A.staff_photo_url,
+        A.staff_resume_url
+      FROM bank_worker_base.bank_branch_staff A
+      WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
+      AND A.branch_code = #{arg1,jdbcType=VARCHAR}
+        AND A.staff_post_id = #{arg2,jdbcType=INTEGER}
+      AND A.staff_cellphone = #{arg3,jdbcType=VARCHAR}
+    ) A
+    INNER JOIN bank_worker_base.bank_branch_staff_account B
+      ON A.bank_code = B.bank_code
+      AND A.branch_code = B.branch_code
+      AND A.staff_cellphone = B.staff_account
+      AND B.data_status = 'N'
+    WHERE B.system_id = 2
+    AND B.staff_password = #{arg4,jdbcType=VARCHAR};
   </select>
 
   <select id="searchAuthorizedSystem" resultMap="BaseResultMap">

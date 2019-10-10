@@ -33,6 +33,15 @@ public class BankBranchStaffAccountController {
         return serviceImpl.login(account, password, systemID);
     }
 
+    @RequestMapping(value = "/loginBalance/{bankCode}/{branchCode}/{postID}/{cellphone}/{password}", method = RequestMethod.GET)
+    public UnifiedResponse loginBalance(@PathVariable("bankCode") String bankCode,
+                                        @PathVariable("branchCode") String branchCode,
+                                        @PathVariable("postID") int postID,
+                                        @PathVariable("cellphone") String cellphone,
+                                        @PathVariable("password") String password) {
+        return serviceImpl.loginBalance(bankCode, branchCode, postID, cellphone, password);
+    }
+
     @RequestMapping(value = "/exist/{value}", method = RequestMethod.GET)
     public UnifiedResponse checkExist(@PathVariable("value") String value){
         return serviceImpl.existCheck(value);
