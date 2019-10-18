@@ -9,7 +9,9 @@ public class BusinessHurryUpEntity extends BaseEntity {
     private String branchCode;
     private int businessID;
     private int senderID;
+    private String senderPhoto;
     private String senderName;
     private int receiverID;
     private String receiverName;
+    private String hurryUpStatus;
 }

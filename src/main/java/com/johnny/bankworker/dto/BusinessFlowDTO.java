@@ -13,6 +13,5 @@ public class BusinessFlowDTO extends BaseDTO {
     private String receiveTime;
     private String businessStatus;
     private int callbackID;
-    private String otherCallbackMsg;
     private String completeTime;
 }

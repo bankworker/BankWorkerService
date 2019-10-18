@@ -3,7 +3,7 @@ package com.johnny.bankworker.vo;
 import lombok.Data;
 
 @Data
-class BaseVO {
+public class BaseVO {
     private String dataStatus;
     private String dataStatusText;
     private String createUser;

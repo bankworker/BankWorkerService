@@ -3,7 +3,7 @@ package com.johnny.bankworker.entity;
 import lombok.Data;
 
 @Data
-class BaseEntity {
+public class BaseEntity {
     private String dataStatus;
     private String dataStatusText;
     private String createUser;

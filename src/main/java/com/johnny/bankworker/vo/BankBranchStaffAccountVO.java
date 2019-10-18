@@ -14,6 +14,7 @@ public class BankBranchStaffAccountVO extends BaseVO {
     private Integer systemID;
     private String systemName;
     private String account;
+    private int staffID;
     private String staffName;
     private String password;
     private String staffPhotoUrl;

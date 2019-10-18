@@ -41,6 +41,7 @@ public class ObjectConvertUtils {
                     Object[] obj = new Object[1];
                     obj[0] = value;
                     commonUtils.invokeSetMethod(targetBean, f2, f2.getName(), obj);
+                    break;
                 }
             }
         }

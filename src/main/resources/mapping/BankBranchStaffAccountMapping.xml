@@ -10,6 +10,7 @@
     <result column="system_id" property="systemID" jdbcType="INTEGER" />
     <result column="system_name" property="systemName" jdbcType="VARCHAR" />
     <result column="staff_account" property="account" jdbcType="VARCHAR" />
+    <result column="staff_id" property="staffID" jdbcType="INTEGER" />
     <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
     <result column="staff_password" property="password" jdbcType="VARCHAR" />
     <result column="staff_photo_url" property="staffPhotoUrl" jdbcType="VARCHAR" />

@@ -1,5 +1,6 @@
 package com.johnny.bankworker.dto;
 
+import com.johnny.bankworker.dto.BaseDTO;
 import lombok.Data;
 
 @Data

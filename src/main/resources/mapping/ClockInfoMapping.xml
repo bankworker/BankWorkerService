@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.workerbalance.ClockInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.ClockInfoEntity" >
+    <id column="clock_id" property="clockID" jdbcType="INTEGER" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="branch_code" property="branchCode" jdbcType="VARCHAR" />
+    <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
+    <result column="staff_id" property="staffID" jdbcType="INTEGER" />
+    <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
+    <result column="clock_status" property="clockStatus" jdbcType="VARCHAR" />
+    <result column="clock_status_text" property="clockStatusText" jdbcType="VARCHAR" />
+    <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
+    <result column="data_status_text" property="dataStatusText" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="searchCurrentClockInfo" resultMap="BaseResultMap">
+    SELECT
+      A.clock_id,
+      A.bank_code,
+      A.branch_code,
+      A.staff_id,
+      A.clock_status,
+      CASE WHEN A.clock_status = '0' THEN '到岗'
+          WHEN A.clock_status = '1' THEN '空闲'
+          WHEN A.clock_status = '2' THEN '繁忙'
+          WHEN A.clock_status = '3' THEN '离开'
+          WHEN A.clock_status = '4' THEN '离岗'
+          ELSE '未知数据状态'
+      END AS clock_status_text,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_balance.clock_info A
+    LEFT JOIN bank_worker_base.bank_branch_staff B
+    ON A.create_user = B.staff_cellphone
+    LEFT JOIN bank_worker_base.bank_branch_staff C
+    ON A.update_user = C.staff_cellphone
+    WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg1,jdbcType=VARCHAR}
+    AND A.staff_id = #{arg2,jdbcType=INTEGER}
+    ORDER BY A.create_time DESC
+    LIMIT 0, 1;
+  </select>
+  <insert id="insert" parameterType="com.johnny.bankworker.entity.ClockInfoEntity" >
+    INSERT INTO bank_worker_balance.clock_info (
+      bank_code,
+      branch_code,
+      staff_id,
+      clock_status,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{bankCode, jdbcType=VARCHAR},
+      #{branchCode, jdbcType=VARCHAR},
+      #{staffID, jdbcType=INTEGER},
+      #{clockStatus, jdbcType=VARCHAR},
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+</mapper>

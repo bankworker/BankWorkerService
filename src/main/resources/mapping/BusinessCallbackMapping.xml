@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.johnny.bankworker.mapper.BusinessCallbackMapper" >
-  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.BusinessCallbackEntity" >
+<mapper namespace="com.johnny.bankworker.mapper.workerbalance.BusinessCallbackMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.CallBackEntity" >
 
     <id column="callback_id" property="callbackID" jdbcType="INTEGER" />
     <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
@@ -52,7 +52,7 @@
     AND branch_code = #{arg1,jdbcType=VARCHAR}
     AND callback_msg = #{arg2,jdbcType=VARCHAR};
   </select>
-  <insert id="insert" parameterType="com.johnny.bankworker.entity.BusinessCallbackEntity" >
+  <insert id="insert" parameterType="com.johnny.bankworker.entity.CallBackEntity" >
     INSERT INTO bank_worker_balance.business_callback_mapping (
       bank_code,
       branch_code,
@@ -68,7 +68,7 @@
       #{updateUser, jdbcType=VARCHAR}
     )
   </insert>
-  <update id="update" parameterType="com.johnny.bankworker.entity.BusinessCallbackEntity" >
+  <update id="update" parameterType="com.johnny.bankworker.entity.CallBackEntity" >
     UPDATE bank_worker_balance.business_callback_mapping SET
       callback_msg = #{callbackMsg,jdbcType=VARCHAR},
       update_user = #{updateUser,jdbcType=VARCHAR}

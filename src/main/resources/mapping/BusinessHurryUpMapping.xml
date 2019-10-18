@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.workerbalance.BusinessHurryUpMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.BusinessHurryUpEntity" >
+    <id column="hurry_up_id" property="hurryUpID" jdbcType="INTEGER" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="branch_code" property="branchCode" jdbcType="VARCHAR" />
+    <result column="business_id" property="businessID" jdbcType="INTEGER" />
+    <result column="sender_id" property="senderID" jdbcType="INTEGER" />
+    <result column="sender_photo" property="senderPhoto" jdbcType="VARCHAR" />
+    <result column="sender_name" property="senderName" jdbcType="VARCHAR" />
+    <result column="receiver_id" property="receiverID" jdbcType="INTEGER" />
+    <result column="receiver_name" property="receiverName" jdbcType="VARCHAR" />
+    <result column="hurry_up_status" property="hurryUpStatus" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <select id="searchLatestHurryUp4Receiver" resultMap="BaseResultMap">
+    SELECT
+      A.hurry_up_id,
+      A.bank_code,
+      A.branch_code,
+      A.business_id,
+      A.sender_id,
+      B.staff_photo_url AS sender_photo,
+      B.staff_name AS sender_name,
+      A.receiver_id,
+      C.staff_name AS receiver_name,
+      A.hurry_up_status,
+      IFNULL(B.staff_name, '管理员') AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      IFNULL(C.staff_name, '管理员') AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_balance.business_hurry_up A
+      LEFT JOIN bank_worker_base.bank_branch_staff B
+      ON A.sender_id = B.staff_id
+      LEFT JOIN bank_worker_base.bank_branch_staff C
+      ON A.receiver_id = C.staff_id
+    WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
+      AND A.branch_code = #{arg1,jdbcType=VARCHAR}
+      AND A.receiver_id = #{arg2,jdbcType=VARCHAR}
+      AND A.hurry_up_status = 'I'
+      AND to_days(A.create_time) = to_days(now())
+    ORDER BY A.update_time DESC
+    LIMIT 0, 1;
+  </select>
+
+  <insert id="insert" parameterType="com.johnny.bankworker.entity.BusinessHurryUpEntity" >
+    INSERT INTO bank_worker_balance.business_hurry_up (
+      bank_code,
+      branch_code,
+      business_id,
+      sender_id,
+      receiver_id,
+      hurry_up_status,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{bankCode, jdbcType=VARCHAR},
+      #{branchCode, jdbcType=VARCHAR},
+      #{businessID, jdbcType=VARCHAR},
+      #{senderID, jdbcType=VARCHAR},
+      #{receiverID, jdbcType=VARCHAR},
+      'I',
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+  <update id="update" parameterType="com.johnny.bankworker.entity.BusinessHurryUpEntity" >
+    UPDATE bank_worker_balance.business_hurry_up SET
+      hurry_up_status = #{hurryUpStatus,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND business_id = #{businessID,jdbcType=INTEGER}
+    AND receiver_id = #{receiverID,jdbcType=INTEGER};
+  </update>
+</mapper>

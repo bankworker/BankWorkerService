@@ -1,5 +1,6 @@
 package com.johnny.bankworker.entity;
 
+import com.johnny.bankworker.entity.BaseEntity;
 import lombok.Data;
 
 @Data
@@ -9,6 +10,7 @@ public class BusinessFlowEntity extends BaseEntity {
     private String branchCode;
     private int senderID;
     private String senderName;
+    private String senderPhoto;
     private String sendTime;
     private int receiverID;
     private String receiverName;
@@ -16,6 +18,5 @@ public class BusinessFlowEntity extends BaseEntity {
     private String businessStatus;
     private String businessStatusText;
     private int callbackID;
-    private String otherCallbackMsg;
     private String completeTime;
 }

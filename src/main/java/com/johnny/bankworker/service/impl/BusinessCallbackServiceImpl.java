@@ -3,9 +3,9 @@ package com.johnny.bankworker.service.impl;
 import com.johnny.bankworker.common.ObjectConvertUtils;
 import com.johnny.bankworker.constant.ResponseDataConstant;
 import com.johnny.bankworker.dto.BusinessCallbackDTO;
-import com.johnny.bankworker.entity.BusinessCallbackEntity;
+import com.johnny.bankworker.entity.CallBackEntity;
 import com.johnny.bankworker.manager.UnifiedResponseManager;
-import com.johnny.bankworker.mapper.BusinessCallbackMapper;
+import com.johnny.bankworker.mapper.workerbalance.BusinessCallbackMapper;
 import com.johnny.bankworker.service.BusinessCallbackService;
 import com.johnny.bankworker.vo.BusinessCallbackVO;
 import com.johnny.bankworker.vo.UnifiedResponse;
@@ -32,10 +32,18 @@ public class BusinessCallbackServiceImpl implements BusinessCallbackService {
             if(totalCount == 0){
                 return UnifiedResponseManager.buildSearchSuccessResponse(ResponseDataConstant.NO_SEARCH_COUNT, ResponseDataConstant.NO_DATA);
             }
-            List<BusinessCallbackEntity> entityList =  myMapper.searchList4Branch(startIndex, pageSize, bankCode, branchCode);
-            for (BusinessCallbackEntity entity : entityList) {
+            List<CallBackEntity> entityList =  myMapper.searchList4Branch(startIndex, pageSize, bankCode, branchCode);
+            for (CallBackEntity entity : entityList) {
                 BusinessCallbackVO model = new BusinessCallbackVO();
-                ObjectConvertUtils.toBean(entity, model);
+                //ObjectConvertUtils.toBean(entity, model);
+                model.setCallbackID(entity.getCallbackID());
+                model.setBankCode(entity.getBankCode());
+                model.setBranchCode(entity.getBranchCode());
+                model.setCallbackMsg(entity.getCallbackMsg());
+                model.setCreateUser(entity.getCreateUser());
+                model.setCreateTime(entity.getCreateTime());
+                model.setUpdateUser(entity.getUpdateUser());
+                model.setUpdateTime(entity.getUpdateTime());
                 modelList.add(model);
             }
             return UnifiedResponseManager.buildSearchSuccessResponse(totalCount, modelList);
@@ -74,7 +82,7 @@ public class BusinessCallbackServiceImpl implements BusinessCallbackService {
     @Override
     public UnifiedResponse add(BusinessCallbackDTO dto) {
         try {
-            BusinessCallbackEntity branchNewsEntity = new BusinessCallbackEntity();
+            CallBackEntity branchNewsEntity = new CallBackEntity();
             ObjectConvertUtils.toBean(dto, branchNewsEntity);
             branchNewsEntity.setCreateUser(dto.getLoginUser());
             branchNewsEntity.setUpdateUser(dto.getLoginUser());
@@ -89,7 +97,7 @@ public class BusinessCallbackServiceImpl implements BusinessCallbackService {
     @Override
     public UnifiedResponse change(BusinessCallbackDTO dto) {
         try {
-            BusinessCallbackEntity branchNewsEntity = new BusinessCallbackEntity();
+            CallBackEntity branchNewsEntity = new CallBackEntity();
             ObjectConvertUtils.toBean(dto, branchNewsEntity);
             branchNewsEntity.setUpdateUser(dto.getLoginUser());
             int affectRow = myMapper.update(branchNewsEntity);
