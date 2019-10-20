@@ -12,6 +12,10 @@
     <result column="staff_account" property="account" jdbcType="VARCHAR" />
     <result column="staff_id" property="staffID" jdbcType="INTEGER" />
     <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
+
+    <result column="staff_post_id" property="staffPostID" jdbcType="INTEGER" />
+    <result column="staff_post_name" property="staffPostName" jdbcType="VARCHAR" />
+
     <result column="staff_password" property="password" jdbcType="VARCHAR" />
     <result column="staff_photo_url" property="staffPhotoUrl" jdbcType="VARCHAR" />
     <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
@@ -112,6 +116,8 @@
       C.system_name,
       A.staff_account,
       IFNULL(F.staff_name, '管理员') AS staff_name,
+      A.staff_post_id,
+      G.staff_post_name,
       A.data_status,
       CASE WHEN A.data_status = 'N' THEN '正常'
       WHEN A.data_status = 'F' THEN '冻结'
@@ -134,6 +140,10 @@
     LEFT JOIN bank_worker_base.bank_branch_staff F
     ON A.staff_account = F.staff_cellphone
     WHERE A.staff_account = #{arg0,jdbcType=VARCHAR}
+    INNER JOIN bank_worker_base.staff_post_setting G
+    ON A.bank_code = G.bank_code
+    AND A.branch_code = G.branch_code
+    AND A.staff_post_id = G.staff_post_id
     AND A.staff_password = #{arg1,jdbcType=VARCHAR}
     AND A.system_id = #{arg2,jdbcType=VARCHAR}
     AND A.data_status = 'N';
@@ -149,6 +159,7 @@
       A.staff_name,
       A.staff_cellphone AS staff_account,
       A.staff_post_id,
+      C.staff_post_name,
       A.staff_photo_url,
       A.staff_resume_url
     FROM
@@ -169,10 +180,14 @@
       AND A.staff_cellphone = #{arg3,jdbcType=VARCHAR}
     ) A
     INNER JOIN bank_worker_base.bank_branch_staff_account B
-      ON A.bank_code = B.bank_code
-      AND A.branch_code = B.branch_code
-      AND A.staff_cellphone = B.staff_account
-      AND B.data_status = 'N'
+    ON A.bank_code = B.bank_code
+    AND A.branch_code = B.branch_code
+    AND A.staff_cellphone = B.staff_account
+    AND B.data_status = 'N'
+    INNER JOIN bank_worker_base.staff_post_setting C
+    ON A.bank_code = C.bank_code
+    AND A.branch_code = C.branch_code
+    AND A.staff_post_id = C.staff_post_id
     WHERE B.system_id = 2
     AND B.staff_password = #{arg4,jdbcType=VARCHAR};
   </select>

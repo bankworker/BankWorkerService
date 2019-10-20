@@ -15,6 +15,8 @@ public class BankBranchStaffAccountEntity extends BaseEntity {
     private String account;
     private int staffID;
     private String staffName;
+    private int staffPostID;
+    private String staffPostName;
     private String password;
     private String staffPhotoUrl;
 }

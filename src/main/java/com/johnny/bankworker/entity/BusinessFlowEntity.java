@@ -18,5 +18,6 @@ public class BusinessFlowEntity extends BaseEntity {
     private String businessStatus;
     private String businessStatusText;
     private int callbackID;
+    private String callbackMsg;
     private String completeTime;
 }

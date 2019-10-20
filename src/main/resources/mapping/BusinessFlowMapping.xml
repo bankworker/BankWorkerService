@@ -15,6 +15,7 @@
     <result column="business_status" property="businessStatus" jdbcType="VARCHAR" />
     <result column="business_status_text" property="businessStatusText" jdbcType="VARCHAR" />
     <result column="callback_id" property="callbackID" jdbcType="INTEGER" />
+    <result column="callback_msg" property="callbackMsg" jdbcType="INTEGER" />
     <result column="complete_time" property="completeTime" jdbcType="TIMESTAMP" />
     <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
     <result column="data_status_text" property="dataStatusText" jdbcType="VARCHAR" />
@@ -81,7 +82,7 @@
       CASE WHEN A.business_status = '0' THEN '等待回复'
           WHEN A.business_status = '1' THEN '接单'
           WHEN A.business_status = '2' THEN '拒绝'
-          WHEN A.business_status = '3' THEN '完成'
+          WHEN A.business_status = '3' THEN '完结'
           WHEN A.business_status = '4' THEN '回呼'
           ELSE '未知数据状态'
       END AS business_status_text,
@@ -116,19 +117,20 @@
       A.branch_code,
       A.sender_id,
       B.staff_name AS sender_name,
-      A.send_time,
+      DATE_FORMAT(A.send_time, '%Y-%m-%d %H:%i:%s') AS send_time,
       A.receiver_id,
       C.staff_name AS receiver_name,
-      A.receive_time,
+      DATE_FORMAT(A.receive_time, '%Y-%m-%d %H:%i:%s') AS receive_time,
       A.business_status,
       CASE WHEN A.business_status = '0' THEN '等待回复'
           WHEN A.business_status = '1' THEN '接单'
           WHEN A.business_status = '2' THEN '拒绝'
-          WHEN A.business_status = '3' THEN '完成'
+          WHEN A.business_status = '3' THEN '完结'
           WHEN A.business_status = '4' THEN '回呼'
           ELSE '未知数据状态'
       END AS business_status_text,
       A.callback_id,
+      D.callback_msg,
       IFNULL(A.complete_time, '') AS complete_time,
       IFNULL(B.staff_name, '管理员') AS create_user,
       DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
@@ -143,6 +145,11 @@
     ON A.receiver_id = C.staff_id
     AND A.bank_code = C.bank_code
     AND A.branch_code = C.branch_code
+    LEFT JOIN bank_worker_balance.business_callback_mapping D
+    ON A.callback_id = D.callback_id
+    AND A.bank_code = D.bank_code
+    AND A.branch_code = D.branch_code
+
     WHERE A.bank_code = #{arg0,jdbcType=VARCHAR}
     AND A.branch_code = #{arg1,jdbcType=VARCHAR}
     AND A.sender_id = #{arg2,jdbcType=INTEGER}
@@ -155,9 +162,7 @@
       bank_code,
       branch_code,
       sender_id,
-      send_time,
       receiver_id,
-      business_status,
       create_user,
       update_user
     )
@@ -165,9 +170,7 @@
       #{bankCode, jdbcType=VARCHAR},
       #{branchCode, jdbcType=VARCHAR},
       #{senderID, jdbcType=INTEGER},
-      #{sendTime, jdbcType=TIMESTAMP},
       #{receiverID, jdbcType=INTEGER},
-      #{businessStatus, jdbcType=VARCHAR},
       #{createUser, jdbcType=VARCHAR},
       #{updateUser, jdbcType=VARCHAR}
     )
@@ -182,6 +185,7 @@
     AND branch_code = #{branchCode,jdbcType=VARCHAR}
     AND business_id = #{businessID,jdbcType=INTEGER}
   </update>
+
   <update id="completeBusiness" parameterType="com.johnny.bankworker.entity.BusinessFlowEntity" >
     UPDATE bank_worker_balance.business_flow SET
       business_status = #{businessStatus,jdbcType=VARCHAR},

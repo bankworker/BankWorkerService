@@ -11,6 +11,10 @@ public class ClockInfoEntity extends BaseEntity {
     private String branchName;
     private int staffID;
     private String staffName;
+    private int staffPostID;
+    private String staffPostName;
+    private String staffPhoto;
+    private String staffResume;
     private String clockStatus;
     private String clockStatusText;
 }

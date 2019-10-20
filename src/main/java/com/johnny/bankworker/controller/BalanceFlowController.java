@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/balance/businessFlow")
-public class BusinessFlowController {
+public class BalanceFlowController {
     @Autowired
     private BusinessFlowService serviceImpl;
 

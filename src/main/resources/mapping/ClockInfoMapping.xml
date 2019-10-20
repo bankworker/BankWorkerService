@@ -9,6 +9,10 @@
     <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
     <result column="staff_id" property="staffID" jdbcType="INTEGER" />
     <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
+    <result column="staff_post_id" property="staffPostID" jdbcType="INTEGER" />
+    <result column="staff_post_name" property="staffPostName" jdbcType="VARCHAR" />
+    <result column="staff_photo_url" property="staffPhoto" jdbcType="VARCHAR" />
+    <result column="staff_resume_url" property="staffResume" jdbcType="VARCHAR" />
     <result column="clock_status" property="clockStatus" jdbcType="VARCHAR" />
     <result column="clock_status_text" property="clockStatusText" jdbcType="VARCHAR" />
     <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
@@ -26,7 +30,7 @@
       A.staff_id,
       A.clock_status,
       CASE WHEN A.clock_status = '0' THEN '到岗'
-          WHEN A.clock_status = '1' THEN '空闲'
+          WHEN A.clock_status = '1' THEN '等待'
           WHEN A.clock_status = '2' THEN '繁忙'
           WHEN A.clock_status = '3' THEN '离开'
           WHEN A.clock_status = '4' THEN '离岗'
@@ -47,6 +51,44 @@
     ORDER BY A.create_time DESC
     LIMIT 0, 1;
   </select>
+
+  <select id="searchClockedFinancialList" resultMap="BaseResultMap">
+    SELECT
+      A.clock_id,
+      A.staff_id,
+      B.clock_status,
+      CASE WHEN B.clock_status = '0' THEN '到岗'
+          WHEN B.clock_status = '1' THEN '等待'
+          WHEN B.clock_status = '2' THEN '繁忙'
+          WHEN B.clock_status = '3' THEN '离开'
+          WHEN B.clock_status = '4' THEN '离岗'
+          ELSE '未知数据状态'
+      END AS clock_status_text,
+      C.staff_name,
+      C.staff_post_id,
+      D.staff_post_name,
+      C.staff_photo_url,
+      C.staff_resume_url
+    FROM
+    (
+      SELECT
+      MAX(clock_id) AS clock_id,
+      staff_id
+      FROM bank_worker_balance.clock_info
+      WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+      AND branch_code = #{arg1,jdbcType=VARCHAR}
+      AND to_days(create_time) = to_days(now())
+      GROUP BY staff_id
+    ) A
+    INNER JOIN bank_worker_balance.clock_info B
+    ON A.clock_id = B.clock_id
+    INNER JOIN bank_worker_base.bank_branch_staff C
+    ON A.staff_id = C.staff_id
+    INNER JOIN bank_worker_base.staff_post_setting D
+    ON C.staff_post_id = D.staff_post_id;
+  </select>
+
+
   <insert id="insert" parameterType="com.johnny.bankworker.entity.ClockInfoEntity" >
     INSERT INTO bank_worker_balance.clock_info (
       bank_code,

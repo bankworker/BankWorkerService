@@ -19,6 +19,11 @@ public class ClockInfoController {
         return serviceImpl.findCurrentClockInfo(bankCode, branchCode, staffID);
     }
 
+    @RequestMapping(value = "/{bankCode}/{branchCode}", method = RequestMethod.GET)
+    public UnifiedResponse findClockedFinancialList(@PathVariable("bankCode") String bankCode,
+                                                @PathVariable("branchCode") String branchCode){
+        return serviceImpl.findClockedFinancialList(bankCode, branchCode);
+    }
 
     @RequestMapping(method = RequestMethod.POST)
     public UnifiedResponse post(@RequestBody ClockInfoDTO dto){

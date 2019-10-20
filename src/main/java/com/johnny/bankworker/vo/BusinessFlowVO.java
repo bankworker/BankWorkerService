@@ -1,6 +1,5 @@
 package com.johnny.bankworker.vo;
 
-import com.johnny.bankworker.vo.BaseVO;
 import lombok.Data;
 
 @Data
@@ -18,5 +17,6 @@ public class BusinessFlowVO extends BaseVO {
     private String businessStatus;
     private String businessStatusText;
     private int callbackID;
+    private String callbackMsg;
     private String completeTime;
 }

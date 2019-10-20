@@ -6,4 +6,6 @@ import com.johnny.bankworker.vo.UnifiedResponse;
 
 public interface ClockInfoService extends BaseService<ClockInfoDTO> {
     UnifiedResponse findCurrentClockInfo(String bankCode, String branchCode, int staffID);
+
+    UnifiedResponse findClockedFinancialList(String bankCode, String branchCode);
 }
