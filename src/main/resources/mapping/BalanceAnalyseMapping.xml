@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.workerbalance.BalanceAnalyseMapper" >
+  <resultMap id="BalanceAnalyse4FinancialResultMap" type="com.johnny.bankworker.entity.BalanceAnalyse4FinancialEntity" >
+    <id column="receiver_id" property="financialID" jdbcType="INTEGER" />
+    <result column="receiver_name" property="financialName" jdbcType="VARCHAR" />
+    <result column="processed_business_count" property="processedBusinessCount" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="BalanceAnalyse4FinancialClockResultMap" type="com.johnny.bankworker.entity.BalanceAnalyse4FinancialClockEntity" >
+    <id column="staff_id" property="financialID" jdbcType="INTEGER" />
+    <result column="clock_status" property="clockStatus" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="BalanceAnalyse4LobbyResultMap" type="com.johnny.bankworker.entity.BalanceAnalyse4LobbyEntity" >
+    <id column="lobby_id" property="lobbyID" jdbcType="INTEGER" />
+    <result column="lobby_name" property="lobbyName" jdbcType="VARCHAR" />
+    <result column="processed_business_count" property="processedBusinessCount" jdbcType="INTEGER" />
+    <result column="processed_callback_count" property="processedCallbackCount" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="BalanceCallbackAnalyseResultMap" type="com.johnny.bankworker.entity.BalanceCallbackAnalyseEntity" >
+    <id column="callback_id" property="callbackID" jdbcType="INTEGER" />
+    <result column="callback_msg" property="callbackMsg" jdbcType="VARCHAR" />
+    <result column="processed_callback_count" property="processedCallbackCount" jdbcType="INTEGER" />
+  </resultMap>
+
+  <select id="searchFinancialBusinessAnalyse" resultMap="BalanceAnalyse4FinancialResultMap">
+    SELECT
+      A.receiver_id,
+      B.staff_name AS receiver_name,
+      A.processed_business_count
+      FROM
+      (
+        SELECT
+        receiver_id,
+        COUNT(1) AS processed_business_count
+        FROM bank_worker_balance.business_flow
+        WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+        AND branch_code = #{arg1,jdbcType=VARCHAR}
+        AND send_time BETWEEN #{arg2,jdbcType=VARCHAR} AND #{arg3,jdbcType=VARCHAR}
+        AND business_status = '3'
+        GROUP BY receiver_id
+      ) A
+      INNER JOIN bank_worker_base.bank_branch_staff B
+      ON A.receiver_id = B.staff_id;
+  </select>
+
+  <select id="searchFinancialClockList" resultMap="BalanceAnalyse4FinancialClockResultMap">
+    SELECT
+      staff_id,
+      clock_status,
+      create_time
+    FROM bank_worker_balance.clock_info
+    WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+    AND branch_code = #{arg1,jdbcType=VARCHAR}
+    AND staff_id = #{arg2,jdbcType=INTEGER}
+    AND create_time BETWEEN #{arg3,jdbcType=VARCHAR} AND #{arg4,jdbcType=VARCHAR};
+  </select>
+
+  <select id="searchCallbackBusinessAnalyse4Financial" resultMap="BalanceCallbackAnalyseResultMap">
+    SELECT
+      A.callback_id,
+      B.callback_msg,
+      A.processed_callback_count
+    FROM
+      (
+        SELECT
+        callback_id,
+        COUNT(1) AS processed_callback_count
+        FROM bank_worker_balance.business_flow
+        WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+          AND branch_code = #{arg1,jdbcType=VARCHAR}
+          AND receiver_id = #{arg2,jdbcType=VARCHAR}
+          AND send_time BETWEEN #{arg3,jdbcType=VARCHAR} AND #{arg4,jdbcType=VARCHAR}
+          AND business_status = '3'
+          AND callback_id != 0
+        GROUP BY callback_id
+      ) A
+    INNER JOIN bank_worker_balance.business_callback_mapping B
+    ON A.callback_id = B.callback_id
+  </select>
+
+  <select id="searchLobbyBusinessAnalyse" resultMap="BalanceAnalyse4LobbyResultMap">
+    SELECT
+      A.sender_id AS lobby_id,
+      C.staff_name AS lobby_name,
+      A.processed_business_count,
+      B.processed_callback_count
+    FROM
+      (
+        SELECT
+          sender_id,
+          COUNT(1) AS processed_business_count
+        FROM bank_worker_balance.business_flow
+        WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+          AND branch_code = #{arg1,jdbcType=VARCHAR}
+          AND send_time BETWEEN #{arg2,jdbcType=VARCHAR} AND #{arg3,jdbcType=VARCHAR}
+        GROUP BY sender_id
+      ) A
+      INNER JOIN
+      (
+        SELECT
+          sender_id,
+          COUNT(1) AS processed_callback_count
+        FROM bank_worker_balance.business_flow
+        WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+          AND branch_code = #{arg1,jdbcType=VARCHAR}
+          AND send_time BETWEEN #{arg2,jdbcType=VARCHAR} AND #{arg3,jdbcType=VARCHAR}
+          AND callback_id != 0
+          AND business_status = '3'
+        GROUP BY sender_id
+      ) B
+      ON A.sender_id = B.sender_id
+      INNER JOIN bank_worker_base. bank_branch_staff C
+      ON A.sender_id = C.staff_id;
+  </select>
+
+  <select id="searchCallbackBusinessAnalyse4Lobby" resultMap="BalanceCallbackAnalyseResultMap">
+    SELECT
+      A.callback_id,
+      B.callback_msg,
+      A.processed_callback_count
+    FROM
+      (
+        SELECT
+        callback_id,
+        COUNT(1) AS processed_callback_count
+        FROM bank_worker_balance.business_flow
+        WHERE bank_code = #{arg0,jdbcType=VARCHAR}
+          AND branch_code = #{arg1,jdbcType=VARCHAR}
+          AND sender_id = #{arg2,jdbcType=VARCHAR}
+          AND send_time BETWEEN #{arg3,jdbcType=VARCHAR} AND #{arg4,jdbcType=VARCHAR}
+          AND business_status = '3'
+          AND callback_id != 0
+        GROUP BY callback_id
+      ) A
+    INNER JOIN bank_worker_balance.business_callback_mapping B
+    ON A.callback_id = B.callback_id
+  </select>
+
+</mapper>
