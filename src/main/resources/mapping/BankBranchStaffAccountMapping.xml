@@ -115,9 +115,7 @@
       A.system_id,
       C.system_name,
       A.staff_account,
-      IFNULL(F.staff_name, '管理员') AS staff_name,
-      A.staff_post_id,
-      G.staff_post_name,
+      E.branch_name AS staff_name,
       A.data_status,
       CASE WHEN A.data_status = 'N' THEN '正常'
       WHEN A.data_status = 'F' THEN '冻结'
@@ -129,21 +127,18 @@
       B.admin_name AS update_user,
       DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
     FROM bank_worker_base.bank_branch_staff_account A
-    LEFT JOIN bank_worker_base.system_admin B
+    INNER JOIN bank_worker_base.system_admin B
     ON A.create_user = B.admin_id
-    LEFT JOIN bank_worker_base.system_setting C
+    INNER JOIN bank_worker_base.system_setting C
     ON A.system_id = C.system_id
-    LEFT JOIN bank_worker_base.bank D
+    INNER JOIN bank_worker_base.bank D
     ON A.bank_code = D.bank_code
-    LEFT JOIN bank_worker_base.bank_branch E
-    ON A.branch_code = E.branch_code
-    LEFT JOIN bank_worker_base.bank_branch_staff F
-    ON A.staff_account = F.staff_cellphone
+    AND D.data_status = 'N'
+    INNER JOIN bank_worker_base.bank_branch E
+    ON A.bank_code = E.bank_code
+    AND A.branch_code = E.branch_code
+    AND E.data_status = 'N'
     WHERE A.staff_account = #{arg0,jdbcType=VARCHAR}
-    INNER JOIN bank_worker_base.staff_post_setting G
-    ON A.bank_code = G.bank_code
-    AND A.branch_code = G.branch_code
-    AND A.staff_post_id = G.staff_post_id
     AND A.staff_password = #{arg1,jdbcType=VARCHAR}
     AND A.system_id = #{arg2,jdbcType=VARCHAR}
     AND A.data_status = 'N';

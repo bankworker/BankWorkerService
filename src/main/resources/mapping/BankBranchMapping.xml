@@ -40,6 +40,7 @@
       A.branch_id,
       A.bank_code,
       C.bank_name,
+      C.bank_logo,
       A.branch_name,
       A.branch_code,
       A.province_code,
@@ -56,7 +57,7 @@
       A.data_status,
       CASE WHEN A.data_status = 'N' THEN '正常'
         WHEN A.data_status = 'F' THEN '冻结'
-        WHEN A.data_status = 'D' THEN '删除'
+        WHEN A.data_status = 'D' THEN '冻结'
         ELSE '未知数据状态'
       END AS data_status_text,
       B.admin_name AS create_user,
@@ -102,7 +103,7 @@
       A.data_status,
       CASE WHEN A.data_status = 'N' THEN '正常'
         WHEN A.data_status = 'F' THEN '冻结'
-        WHEN A.data_status = 'D' THEN '删除'
+        WHEN A.data_status = 'D' THEN '冻结'
         ELSE '未知数据状态'
       END AS data_status_text,
       B.admin_name AS create_user,
@@ -144,7 +145,7 @@
       A.data_status,
       CASE WHEN A.data_status = 'N' THEN '正常'
         WHEN A.data_status = 'F' THEN '冻结'
-        WHEN A.data_status = 'D' THEN '删除'
+        WHEN A.data_status = 'D' THEN '冻结'
         ELSE '未知数据状态'
       END AS data_status_text,
       B.admin_name AS create_user,
@@ -190,7 +191,7 @@
       A.data_status,
       CASE WHEN A.data_status = 'N' THEN '正常'
         WHEN A.data_status = 'F' THEN '冻结'
-        WHEN A.data_status = 'D' THEN '删除'
+        WHEN A.data_status = 'D' THEN '冻结'
         ELSE '未知数据状态'
       END AS data_status_text,
       B.admin_name AS create_user,
