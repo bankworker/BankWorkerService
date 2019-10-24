@@ -12,10 +12,8 @@
     <result column="staff_account" property="account" jdbcType="VARCHAR" />
     <result column="staff_id" property="staffID" jdbcType="INTEGER" />
     <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
-
     <result column="staff_post_id" property="staffPostID" jdbcType="INTEGER" />
     <result column="staff_post_name" property="staffPostName" jdbcType="VARCHAR" />
-
     <result column="staff_password" property="password" jdbcType="VARCHAR" />
     <result column="staff_photo_url" property="staffPhotoUrl" jdbcType="VARCHAR" />
     <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
@@ -250,7 +248,7 @@
     WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
     AND branch_code = #{branchCode,jdbcType=VARCHAR}
     AND system_id = #{systemID,jdbcType=INTEGER}
-    AND account_id = #{accountID,jdbcType=INTEGER}
+    AND staff_account = #{account,jdbcType=VARCHAR}
   </update>
   <update id="updateByAccount" parameterType="com.johnny.bankworker.entity.BankBranchStaffAccountEntity" >
     UPDATE bank_worker_base.bank_branch_staff_account SET
