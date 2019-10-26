@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.johnny.bankworker.mapper.FileUploadServiceSettingMapper" >
+  <resultMap id="BaseResultMap" type="com.johnny.bankworker.entity.FileUploadServiceSettingEntity" >
+    <id column="service_id" property="serviceID" jdbcType="INTEGER" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="branch_code" property="branchCode" jdbcType="VARCHAR" />
+    <result column="service_url" property="serviceUrl" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="searchTotalCount" parameterType="string" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1) AS TotalCount
+    FROM bank_worker_base.file_upload_service_setting;
+  </select>
+  <select id="searchList" resultMap="BaseResultMap">
+    SELECT
+      A.service_id,
+      A.bank_code,
+      D.bank_name,
+      A.branch_code,
+      E.branch_name,
+      A.service_url,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      C.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.file_upload_service_setting A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.system_admin C
+    ON A.update_user = C.admin_id
+    LEFT JOIN bank_worker_base.bank D
+    ON A.bank_code = D.bank_code
+    LEFT JOIN bank_worker_base.bank_branch E
+    ON A.bank_code = E.bank_code
+    AND A.branch_code = E.branch_code
+    ORDER BY A.update_time DESC
+    LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
+  </select>
+  <select id="searchList4Branch" resultMap="BaseResultMap">
+    SELECT
+      A.service_id,
+      A.bank_code,
+      D.bank_name,
+      A.branch_code,
+      E.branch_name,
+      A.service_url,
+      B.admin_name AS create_user,
+      DATE_FORMAT(A.create_time, '%Y-%m-%d %H:%i:%s') AS create_time,
+      C.admin_name AS update_user,
+      DATE_FORMAT(A.update_time, '%Y-%m-%d %H:%i:%s') AS update_time
+    FROM bank_worker_base.file_upload_service_setting A
+    LEFT JOIN bank_worker_base.system_admin B
+    ON A.create_user = B.admin_id
+    LEFT JOIN bank_worker_base.system_admin C
+    ON A.update_user = C.admin_id
+    LEFT JOIN bank_worker_base.bank D
+    ON A.bank_code = D.bank_code
+    LEFT JOIN bank_worker_base.bank_branch E
+    ON A.bank_code = E.bank_code
+    AND A.branch_code = E.branch_code
+    WHERE A.bank_code = #{arg2,jdbcType=VARCHAR}
+    AND A.branch_code = #{arg3,jdbcType=VARCHAR}
+    ORDER BY A.update_time DESC
+    LIMIT #{arg0,jdbcType=INTEGER}, #{arg1,jdbcType=INTEGER};
+  </select>
+
+  <select id="existCheck" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1) AS TotalCount
+    FROM bank_worker_base.file_upload_service_setting
+    WHERE service_url = #{arg0,jdbcType=VARCHAR};
+  </select>
+
+  <insert id="insert" parameterType="com.johnny.bankworker.entity.FileUploadServiceSettingEntity" >
+    INSERT INTO bank_worker_base.file_upload_service_setting (
+      bank_code,
+      branch_code,
+      service_url,
+      create_user,
+      update_user
+    )
+    VALUES (
+      #{bankCode, jdbcType=VARCHAR},
+      #{branchCode, jdbcType=VARCHAR},
+      #{serviceUrl, jdbcType=VARCHAR},
+      #{createUser, jdbcType=VARCHAR},
+      #{updateUser, jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <update id="update" parameterType="com.johnny.bankworker.entity.FileUploadServiceSettingEntity" >
+    UPDATE bank_worker_base.file_upload_service_setting SET
+      service_url = #{serviceUrl,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    WHERE bank_code = #{bankCode,jdbcType=VARCHAR}
+    AND branch_code = #{branchCode,jdbcType=VARCHAR}
+    AND service_id = #{serviceID,jdbcType=INTEGER};
+  </update>
+
+  <delete id="delete" parameterType="java.lang.Integer" >
+    DELETE FROM bank_worker_base.file_upload_service_setting SET
+    WHERE service_id = #{serviceID,jdbcType=INTEGER}
+  </delete>
+</mapper>
